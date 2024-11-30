@@ -54,14 +54,17 @@ class Chord:
     def extend_with(self, intervals: list[str], symbol: str):
         return Chord(self.intervals + intervals, self.symbol + symbol)
 
-chord_index: dict[str,Chord] = dict()
-def add_chords_to_index(cs: list[Chord]):
-    for c in cs:
-        if c.symbol in chord_index:
-            raise KeyError(c.symbol)
-        chord_index[c.symbol] = c
+class ChordIndex(dict):
+    def add_many(self, chords: list[Chord]):
+        for c in chords:
+            if c.symbol in self:
+                raise KeyError(c.symbol)
+            self[c.symbol] = c
 
-add_chords_to_index([
+chord_index: ChordIndex = ChordIndex()
+
+
+chord_index.add_many([
     # Power
     Chord(['1', '5'], '5'),
 
@@ -100,7 +103,7 @@ add_chords_to_index([
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
     for s in ['b9', '9', '#9']:
-        add_chords_to_index([
+        chord_index.add_many([
             c.extend_with([s], 'add' + s)
         ])
 
@@ -109,7 +112,7 @@ for c in list(chord_index.values()):
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
     for s in ['11', '#11']:
-        add_chords_to_index([
+        chord_index.add_many([
             c.extend_with([s], 'add' + s)
         ])
 
@@ -118,6 +121,10 @@ for c in list(chord_index.values()):
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
     for s in ['13', 'b13']:
-        add_chords_to_index([
+        chord_index.add_many([
             c.extend_with([s], 'add' + s)
         ])
+
+class Relationship():
+    def __init__():
+        pass
