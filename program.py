@@ -48,6 +48,54 @@ for i in interval_index:
     interval_index[i.symbol] = i
 
 
+class Scale:
+    def __init__(self, name, intervals: list[str]):
+        self.name = name
+        self.intervals = tuple(intervals)
+
+
+class ScaleIndex:
+    def __init__(self):
+        self._by_name = dict()
+
+    def add(self, scale: Scale):
+        self._by_name[scale.name] = scale
+
+    def add_many(self, scales: list[Scale]):
+        for s in scales:
+            self.add(s)
+
+    def names(self):
+        return self._by_name.keys()
+
+    def values(self):
+        return self._by_name.values()
+
+    def get_name(self, name: str):
+        return self._by_name[name]
+
+
+scale_index = ScaleIndex()
+scale_index.add_many(
+    [
+        Scale(
+            "lydian", ["1", "2", "3", "b5", "5", "6", "7", "8", "9", "10", "#11"]
+        ),  # b5 is actually #4
+        Scale("ionian", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]),
+        Scale("mixolydian", ["1", "2", "3", "4", "5", "6", "b7", "8", "9", "10", "11"]),
+        Scale("dorian", ["1", "2", "b3", "4", "5", "6", "b7", "8", "9", "b10", "11"]),
+        Scale("aeolian", ["1", "2", "b3", "4", "5", "b6", "b7", "8", "9", "b10", "11"]),
+        Scale(
+            "phrygian", ["1", "b2", "b3", "4", "5", "b6", "b7", "8", "b9", "b10", "11"]
+        ),
+        Scale(
+            "locrian",
+            ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "b11", "#11"],
+        ),  # #11 is actually b12
+    ]
+)
+
+
 class Chord:
     def __init__(self, intervals: tuple[str], symbol: str):
         self.intervals = intervals
@@ -58,6 +106,12 @@ class Chord:
 
     def extend_with(self, interval: str, symbol: str):
         return Chord(self.intervals + (interval,), self.symbol + symbol)
+
+    def is_in(self, scale: Scale):
+        for i in self.intervals:
+            if i not in scale.intervals:
+                return False
+        return True
 
 
 class ChordIndex:
@@ -81,10 +135,10 @@ class ChordIndex:
     def values(self):
         return self._by_symbol.values()
 
-    def find_symbol(self, s: str):
+    def get_symbol(self, s: str):
         return self._by_symbol.get(s, None)
 
-    def find_intervals(self, i: tuple[str]):
+    def get_intervals(self, i: tuple[str]):
         return self._by_intervals.get(i, None)
 
     def dump(self, file: str):
@@ -95,10 +149,14 @@ class ChordIndex:
             for i in x:
                 print(self._by_intervals[i], file=f)
 
+    def restrict(self, scale: Scale):
+        chords = [c for c in self.values() if c.is_in(scale)]
+        restricted = ChordIndex()
+        restricted.add_many(chords)
+        return restricted
+
 
 chord_index: ChordIndex = ChordIndex()
-
-
 chord_index.add_many(
     [
         # basic
@@ -152,7 +210,9 @@ for c in list(chord_index.values()):
     for s in ["11", "#11"]:
         chord_index.add_many([c.extend_with(s, "add" + s)])
 
-chord_index.dump("chords.txt")
+chord_index.dump("chords_all.txt")
+for s in scale_index.values():
+    chord_index.restrict(s).dump("chords_" + s.name + ".txt")
 
 
 class RelationshipType:
@@ -190,7 +250,7 @@ class Relationships(list):
                 return
             intervals2.remove(i)
 
-        c2 = chord_index.find_intervals(tuple(intervals2))
+        c2 = chord_index.get_intervals(tuple(intervals2))
         if c2 is not None:
             self.add(type, c, c2)
 
@@ -199,7 +259,7 @@ class Relationships(list):
     ):
         if i1 in c.intervals:
             intervals2 = tuple_replace(c.intervals, i1, i2)
-            c2 = chord_index.find_intervals(intervals2)
+            c2 = chord_index.get_intervals(intervals2)
             if c2 is not None:
                 self.add(type, c, c2)
 

@@ -1,0 +1,8 @@
+m(no5) (1 b3)
+m(no5)add♯11 (1 b3 #11)
+° (1 b3 b5)
+°add♯11 (1 b3 b5 #11)
+°add♭9 (1 b3 b5 b9)
+°add♭9add♯11 (1 b3 b5 b9 #11)
+m(no5)add♭9 (1 b3 b9)
+m(no5)add♭9add♯11 (1 b3 b9 #11)
