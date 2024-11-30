@@ -1,3 +1,4 @@
+from itertools import chain
 
 prettify_translation = str.maketrans(
     'hMb#',
@@ -11,7 +12,7 @@ class Interval:
         self.symbols = symbol
         self.pretty = prettify(symbol)
     
-    def __repr__self(self):
+    def __repr__(self):
         return self.pretty
 
 intervals: list[Interval] = [
@@ -44,58 +45,81 @@ for i in interval_index:
     interval_index[i.symbol] = i
 
 class Chord:
-    def __init__(self, intervals: list[str], symbol: str):
+    def __init__(self, intervals: frozenset[str], symbol: str):
         self.intervals = intervals
         self.symbol = symbol
     
     def __repr__(self):
         return prettify(self.symbol) + ' (' + ' '.join(self.intervals) + ')'
 
-    def extend_with(self, intervals: list[str], symbol: str):
-        return Chord(self.intervals + intervals, self.symbol + symbol)
+    def extend_with(self, intervals: tuple[str], symbol: str):
+        return Chord(chain(self.intervals, intervals), self.symbol + symbol)
 
-class ChordIndex(dict):
+class ChordIndex():
+    def __init__(self):
+        self._by_symbol = dict()
+        self._by_intervals = dict()
+
+    def __repr__(self):
+        return self.values().__repr__()
+    
+    def add(self, chord: Chord):
+        if chord.symbol in self._by_symbol.keys():
+            raise KeyError(chord.symbol)
+        self._by_symbol[chord.symbol] = chord
+        self._by_intervals[chord.intervals] = chord
+
     def add_many(self, chords: list[Chord]):
         for c in chords:
-            if c.symbol in self:
-                raise KeyError(c.symbol)
-            self[c.symbol] = c
+            self.add(c)
+
+    def values(self):
+        return self._by_symbol.values()
+    
+    def find_symbol(self, s: str):
+        return self._by_symbol[s]
+    
+    def find_intervals(self, i: tuple[str]):
+        return self._by_intervals[i]
 
 chord_index: ChordIndex = ChordIndex()
 
 
 chord_index.add_many([
     # Power
-    Chord(['1', '5'], '5'),
+    Chord(('1', '5'), '5'),
 
     ### Basic chords
-    Chord(['1', '3'], '(no5)'),
-    Chord(['1', 'b3'], 'm(no5)'),
-    Chord(['1', '3', '5'], ''),
-    Chord(['1', 'b3', '5'], 'm'),
-    Chord(['1', '3', 'b6'], '+'), # b6 is actually #5
-    Chord(['1', 'b3', 'b5'], 'd'),
-    Chord(['1', '2', '5'], 'sus2'),
-    Chord(['1', '4', '5'], 'sus4'),
+    Chord(('1', '3'), '(no5)'),
+    Chord(('1', 'b3'), 'm(no5)'),
+    Chord(('1', '3', '5'), ''),
+    Chord(('1', 'b3', '5'), 'm'),
+    Chord(('1', '3', 'b6'), '+'), # b6 is actually #5
+    Chord(('1', 'b3', 'b5'), 'd'),
+    Chord(('1', '2', '5'), 'sus2'),
+    Chord(('1', '4', '5'), 'sus4'),
 
     ### 6
-    Chord(['1', '3', '5', '6'], '6'),
-    Chord(['1', 'm3', '5', '6'], 'm6'),
+    Chord(('1', '3', '5', '6'), '6'),
+    Chord(('1', 'm3', '5', '6'), 'm6'),
 
     ### 7 chords
-    Chord(['1', '3', '5', '7'], '7'),
-    Chord(['1', 'b3', '5', '7'], 'm7'),
-    Chord(['1', '3', '5', 'M7'], 'M7'),
-    Chord(['1', 'b3', '5', 'M7'], 'mM7'),
+    Chord(('1', '3', '5', '7'), '7'),
+    Chord(('1', 'b3', '5', '7'), 'm7'),
+    Chord(('1', '3', '5', 'M7'), 'M7'),
+    Chord(('1', 'b3', '5', 'M7'), 'mM7'),
     # no5
-    Chord(['1', '3', '7'], '7(no5)'),
-    Chord(['1', 'b3', '7'], 'm7(no5)'),
-    Chord(['1', '3', 'M7'], 'M7(no5)'),
-    Chord(['1', 'b3', 'M7'], 'mM7(no5)'),
+    Chord(('1', '3', '7'), '(no5)7'),
+    Chord(('1', 'b3', '7'), 'm(no5)7'),
+    Chord(('1', '3', 'M7'), '(no5)M7'),
+    Chord(('1', 'b3', 'M7'), 'm(no5)M7'),
     # dim
-    Chord(['1', 'b3', 'b5', '6'], 'dim7'), # 6 is actually bb7
-    Chord(['1', 'b3', 'b5', '7'], 'h7'),
-    Chord(['1', 'b3', 'b5', '7'], 'hM7'),
+    Chord(('1', 'b3', 'b5', '6'), 'dim7'), # 6 is actually bb7
+    Chord(('1', 'b3', 'b5', '7'), 'h7'),
+    Chord(('1', 'b3', 'b5', '7'), 'hM7'),
+    # power
+    Chord(('1', '5', '7'), '57'),
+    Chord(('1', '5', 'M7'), '5M7'),
 ])
 
 ### 9 chords
@@ -104,7 +128,7 @@ chord_index.add_many([
 for c in list(chord_index.values()):
     for s in ['b9', '9', '#9']:
         chord_index.add_many([
-            c.extend_with([s], 'add' + s)
+            c.extend_with((s), 'add' + s)
         ])
 
 ### 11 chords
@@ -113,7 +137,7 @@ for c in list(chord_index.values()):
 for c in list(chord_index.values()):
     for s in ['11', '#11']:
         chord_index.add_many([
-            c.extend_with([s], 'add' + s)
+            c.extend_with((s), 'add' + s)
         ])
 
 ### 13 chords
@@ -122,7 +146,7 @@ for c in list(chord_index.values()):
 for c in list(chord_index.values()):
     for s in ['13', 'b13']:
         chord_index.add_many([
-            c.extend_with([s], 'add' + s)
+            c.extend_with((s), 'add' + s)
         ])
 
 class Relationship():
