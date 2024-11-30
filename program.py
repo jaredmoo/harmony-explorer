@@ -71,8 +71,8 @@ add_chords_to_index([
     Chord(['1', 'm3', '5', '6'], 'm6'),
 
     # dim 7 
-    Chord(['1', 'b3', 'b5', '6'], 'dim7', '°'), # 6 is actually bb7
-    Chord(['1', 'b3', 'b5', '7'], 'h7', '𝆩')
+    Chord(['1', 'b3', 'b5', '6'], 'dim7', '°7'), # 6 is actually bb7
+    Chord(['1', 'b3', 'b5', '7'], 'h7', 'ø7')
 ])
 
 # Build 7 chords
@@ -83,7 +83,7 @@ for c in ['(no5)', 'm(no5)', '', 'm', '+', '6', 'm6']:
     ])
 
 # Build 9 chords
-for c in ['(no5)', 'm(no5)', '', 'm', '+']:
+for c in ['(no5)', 'm(no5)', '', 'm', '+', '6', 'm7']:
     add_chords_to_index([
         chord_index[c].extend_with(['7', '9'], '9'),
         chord_index[c].extend_with(['M7', '9'], 'M9', '△9'),
