@@ -43,8 +43,12 @@ class Chord:
     def extend_with(self, intervals, symbol: str, pretty_symbol: str=None):
         return Chord(self.intervals + intervals, self.symbol + symbol, self.pretty_symbol + (pretty_symbol or symbol))
 
+chord_index: dict[str,Chord] = dict()
+def add_chords_to_index(cs: list[Chord]):
+    for c in cs:
+        chord_index[c.symbol] = c
 
-chords: list[Chord] = [
+add_chords_to_index([
     # Power
     Chord(['1', '5'], '5'),
     
@@ -58,24 +62,21 @@ chords: list[Chord] = [
     Chord(['1', '3', 'b6'], '+'), # b6 is actually #5
     Chord(['1', 'b3', 'b5'], 'dim', '°'),
 
-    # Suspended chords
+    # Suspended
     Chord(['1', '2', '5'], 'sus2'),
     Chord(['1', '4', '5'], 'sus4'),
 
-    # 6 chords
+    # 6
     Chord(['1', '3', '5', '6'], '6'),
     Chord(['1', 'm3', '5', '6'], 'm6'),
-]
 
-chord_index: dict[str,Chord] = dict()
-def add_chords_to_index(cs: list[Chord]):
-    for c in cs:
-        chord_index[c.symbol] = c
-
-add_chords_to_index(chords)
+    # dim 7 
+    Chord(['1', 'b3', 'b5', '6'], 'dim7', '°'), # 6 is actually bb7
+    Chord(['1', 'b3', 'b5', '7'], 'h7', '𝆩')
+])
 
 # Build 7 chords
-for c in ['(no5)', 'm(no5)', '', 'm', '+', 'dim', '6', 'm6']:
+for c in ['(no5)', 'm(no5)', '', 'm', '+', '6', 'm6']:
     add_chords_to_index([
         chord_index[c].extend_with(['7'], '7'),
         chord_index[c].extend_with(['M7'], 'M7', '△7')
