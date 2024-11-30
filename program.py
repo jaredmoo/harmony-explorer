@@ -186,11 +186,20 @@ class Relationships(list):
         self._r.append(Relationship(type.inverse(), c2, c1))
 
     def add_with_interval_omitted(self, type: RelationshipType, c: Chord, i: Interval):
-        if i in c.intervals:
-            intervals2 = tuple_remove(c.intervals, i)
-            c2 = chord_index.find_intervals(intervals2)
-            if c2 is not None:
-                self.add(type, c, c2)
+        self.add_with_intervals_omitted(type, c, [i])
+
+    def add_with_intervals_omitted(
+        self, type: RelationshipType, c: Chord, ii: list[Interval]
+    ):
+        intervals2 = list(c.intervals)
+        for i in ii:
+            if i not in c.intervals:
+                return
+            intervals2.remove(i)
+
+        c2 = chord_index.find_intervals(tuple(intervals2))
+        if c2 is not None:
+            self.add(type, c, c2)
 
     def add_with_interval_changed(
         self, type: RelationshipType, c: Chord, i1: Interval, i2: Interval
@@ -223,13 +232,62 @@ for c in chord_index.values():
     relationships.add_with_interval_omitted(
         RelationshipType("neutralize", "make minor"), c, "b3"
     )
+
+    # sparser/denser
     relationships.add_with_interval_omitted(
         RelationshipType("sparser", "denser"), c, "5"
     )
+
+    # Common practices on 11th chords:
+    # 3 can be omitted
+    #   * This reduces the character of a dominant chord
+    #   * This removes the b9 dissonance between 3 & 11.
+    # 5 can be omitted
+    #   * This removes the b9 dissonance between 5 & #11.
+    # 11th can be raised on a major chord
+    #   * This removes the b9 dissonance between 3 & 11.
+    # b9 can be omitted if not in a dominant chord
+    #   * This removes the b9 dissonance between 1 & b9.
+    #
+    # Omitting only '5' is already covered by 'sparser' relationship above.
+    for x in ("b3", "3"):
+        for y in ("11", "#11"):
+            # TODO: Add comments to these relationships
+            relationships.add_with_intervals_omitted(
+                RelationshipType("sparser", "denser"), c, [x]
+            )
+            relationships.add_with_intervals_omitted(
+                RelationshipType("sparser", "denser"), c, [x, "5"]
+            )
+            relationships.add_with_intervals_omitted(
+                RelationshipType("sparser", "denser"), c, [x, "b9"]
+            )
+
+    # Common practices on 13th chords:
+    # Omit 5th and 9th, (and possibly 11th)
+    # Omit 7th and 11th => equivalent to 6/9
+    for i in ["b9", "9"]:
+        relationships.add_with_intervals_omitted(
+            RelationshipType("sparser", "denser"), c, ["5", i]
+        )
+        for j in ["11", "#11"]:
+            relationships.add_with_intervals_omitted(
+                RelationshipType("sparser", "denser"), c, ["5", i, j]
+            )
+
+    for i in ["7", "M7"]:
+        for j in ["11", "#11"]:
+            relationships.add_with_intervals_omitted(
+                RelationshipType("sparser", "denser"), c, [i, j]
+            )
+
+    # extensions
     for i in ["7", "M7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
         relationships.add_with_interval_omitted(
             RelationshipType("de-extend", "extend"), c, i
         )
+
+    # interchange
     for i1, i2 in [
         ("b3", "3"),
         ("7", "M7"),
