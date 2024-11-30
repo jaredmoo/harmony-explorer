@@ -92,6 +92,8 @@ scale_index.add_many(
             "locrian",
             ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "b11", "#11"],
         ),  # #11 is actually b12
+        Scale("pentatonic", ["1", "2", "4", "5", "6"]),
+        Scale("minor pentatonic", ["1", "b3", "4", "5", "b7"]),
     ]
 )
 
