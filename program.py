@@ -29,8 +29,8 @@ intervals: list[Interval] = [
     Interval(7, "5"),
     Interval(8, "b6"),
     Interval(9, "6"),
-    Interval(10, "7"),
-    Interval(11, "M7"),
+    Interval(10, "b7"),
+    Interval(11, "7"),
     Interval(12, "8"),
     Interval(13, "b9"),
     Interval(14, "9"),
@@ -92,8 +92,12 @@ scale_index.add_many(
             "locrian",
             ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "b11", "#11"],
         ),  # #11 is actually b12
-        Scale("pentatonic", ["1", "2", "4", "5", "6"]),
-        Scale("minor pentatonic", ["1", "b3", "4", "5", "b7"]),
+        Scale("pentatonic", ["1", "2", "4", "5", "6", "8", "9", "11"]),
+        Scale("minor pentatonic", ["1", "b3", "4", "5", "b7", "8", "b10", "11"]),
+        Scale(
+            "harmonic minor",
+            ["1", "2", "b3", "4", "5", "b6", "b7", "7", "8", "9", "b10", "11"],
+        ),
     ]
 )
 
@@ -179,22 +183,22 @@ chord_index.add_many(
         Chord(("1", "3", "5", "6"), "6"),
         Chord(("1", "m3", "5", "6"), "m6"),
         ### 7 chords
-        Chord(("1", "3", "5", "7"), "7"),
-        Chord(("1", "b3", "5", "7"), "m7"),
-        Chord(("1", "3", "5", "M7"), "M7"),
-        Chord(("1", "b3", "5", "M7"), "mM7"),
+        Chord(("1", "3", "5", "b7"), "7"),
+        Chord(("1", "b3", "5", "b7"), "m7"),
+        Chord(("1", "3", "5", "7"), "M7"),
+        Chord(("1", "b3", "5", "7"), "mM7"),
         # power
-        Chord(("1", "5", "7"), "57"),
-        Chord(("1", "5", "M7"), "5M7"),
+        Chord(("1", "5", "b7"), "57"),
+        Chord(("1", "5", "7"), "5M7"),
         # no5
-        Chord(("1", "3", "7"), "(no5)7"),
-        Chord(("1", "b3", "7"), "m(no5)7"),
-        Chord(("1", "3", "M7"), "(no5)M7"),
-        Chord(("1", "b3", "M7"), "m(no5)M7"),
+        Chord(("1", "3", "b7"), "(no5)7"),
+        Chord(("1", "b3", "b7"), "m(no5)7"),
+        Chord(("1", "3", "7"), "(no5)M7"),
+        Chord(("1", "b3", "7"), "m(no5)M7"),
         # dim
         Chord(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
-        Chord(("1", "b3", "b5", "7"), "h7"),
-        Chord(("1", "b3", "b5", "7"), "hM7"),
+        Chord(("1", "b3", "b5", "b7"), "h7"),
+        Chord(("1", "b3", "b5", "b7"), "hM7"),
     ]
 )
 
@@ -323,7 +327,7 @@ for c in chord_index.values():
     # Omit 7th and 11th => equivalent to 6/9
 
     # extensions
-    for i in ["7", "M7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
+    for i in ["b7", "7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
         relationships.add_with_interval_omitted(
             RelationshipType("de-extend", "extend"), c, i
         )
@@ -331,7 +335,7 @@ for c in chord_index.values():
     # interchange
     for i1, i2 in [
         ("b3", "3"),
-        ("7", "M7"),
+        ("b7", "7"),
         ("b9", "9"),
         ("b9", "#9"),
         ("9", "#9"),
