@@ -46,6 +46,8 @@ class Chord:
 chord_index: dict[str,Chord] = dict()
 def add_chords_to_index(cs: list[Chord]):
     for c in cs:
+        if c.symbol in chord_index:
+            raise KeyError(c.symbol)
         chord_index[c.symbol] = c
 
 add_chords_to_index([
@@ -88,5 +90,7 @@ for c in ['(no5)', 'm(no5)', '', 'm', '+', '6', 'm7']:
         chord_index[c].extend_with(['7', '9'], '9'),
         chord_index[c].extend_with(['M7', '9'], 'M9', '△9'),
         chord_index[c].extend_with(['7', 'b9'], 'b9', '♭9'),
-        chord_index[c].extend_with(['M7', 'b9'], 'M9', '△♭9')
+        chord_index[c].extend_with(['M7', 'b9'], 'Mb9', '△♭9'),
+        chord_index[c].extend_with(['7', '#9'], '#9', '♯9'),
+        chord_index[c].extend_with(['M7', '#9'], 'M#9', '△♯9'),
     ])
