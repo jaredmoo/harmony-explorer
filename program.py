@@ -110,7 +110,7 @@ chord_index.add_many(
         Chord(("1", "3"), "(no5)"),
         Chord(("1", "b3"), "m(no5)"),
         # dim/aug
-        Chord(("1", "b3", "b5"), "d"),
+        Chord(("1", "b3", "b5"), "dim"),
         Chord(("1", "3", "b6"), "+"),  # b6 is actually #5
         # sus
         Chord(("1", "2", "5"), "sus2"),
