@@ -1,4 +1,5 @@
-from itertools import chain
+
+import io
 
 prettify_translation = str.maketrans(
     'hMb#',
@@ -52,8 +53,8 @@ class Chord:
     def __repr__(self):
         return prettify(self.symbol) + ' (' + ' '.join(self.intervals) + ')'
 
-    def extend_with(self, intervals: tuple[str], symbol: str):
-        return Chord(chain(self.intervals, intervals), self.symbol + symbol)
+    def extend_with(self, interval: str, symbol: str):
+        return Chord(self.intervals + (interval,), self.symbol + symbol)
 
 class ChordIndex():
     def __init__(self):
@@ -81,21 +82,32 @@ class ChordIndex():
     
     def find_intervals(self, i: tuple[str]):
         return self._by_intervals[i]
+    
+    def dump(self, file: str):
+        x = list(self._by_intervals.keys())
+        x.sort()
+        with io.open(file, 'w', encoding='utf8') as f:
+            f.truncate()
+            for i in x:
+                print(self._by_intervals[i], file=f)
 
+    
 chord_index: ChordIndex = ChordIndex()
 
 
 chord_index.add_many([
-    # Power
-    Chord(('1', '5'), '5'),
-
-    ### Basic chords
-    Chord(('1', '3'), '(no5)'),
-    Chord(('1', 'b3'), 'm(no5)'),
+    # basic
     Chord(('1', '3', '5'), ''),
     Chord(('1', 'b3', '5'), 'm'),
-    Chord(('1', '3', 'b6'), '+'), # b6 is actually #5
+    # power
+    Chord(('1', '5'), '5'),
+    # no5
+    Chord(('1', '3'), '(no5)'),
+    Chord(('1', 'b3'), 'm(no5)'),
+    # dim/aug
     Chord(('1', 'b3', 'b5'), 'd'),
+    Chord(('1', '3', 'b6'), '+'), # b6 is actually #5
+    # sus
     Chord(('1', '2', '5'), 'sus2'),
     Chord(('1', '4', '5'), 'sus4'),
 
@@ -108,6 +120,9 @@ chord_index.add_many([
     Chord(('1', 'b3', '5', '7'), 'm7'),
     Chord(('1', '3', '5', 'M7'), 'M7'),
     Chord(('1', 'b3', '5', 'M7'), 'mM7'),
+    # power
+    Chord(('1', '5', '7'), '57'),
+    Chord(('1', '5', 'M7'), '5M7'),
     # no5
     Chord(('1', '3', '7'), '(no5)7'),
     Chord(('1', 'b3', '7'), 'm(no5)7'),
@@ -117,9 +132,6 @@ chord_index.add_many([
     Chord(('1', 'b3', 'b5', '6'), 'dim7'), # 6 is actually bb7
     Chord(('1', 'b3', 'b5', '7'), 'h7'),
     Chord(('1', 'b3', 'b5', '7'), 'hM7'),
-    # power
-    Chord(('1', '5', '7'), '57'),
-    Chord(('1', '5', 'M7'), '5M7'),
 ])
 
 ### 9 chords
@@ -128,7 +140,7 @@ chord_index.add_many([
 for c in list(chord_index.values()):
     for s in ['b9', '9', '#9']:
         chord_index.add_many([
-            c.extend_with((s), 'add' + s)
+            c.extend_with(s, 'add' + s)
         ])
 
 ### 11 chords
@@ -137,7 +149,7 @@ for c in list(chord_index.values()):
 for c in list(chord_index.values()):
     for s in ['11', '#11']:
         chord_index.add_many([
-            c.extend_with((s), 'add' + s)
+            c.extend_with(s, 'add' + s)
         ])
 
 ### 13 chords
@@ -146,9 +158,12 @@ for c in list(chord_index.values()):
 for c in list(chord_index.values()):
     for s in ['13', 'b13']:
         chord_index.add_many([
-            c.extend_with((s), 'add' + s)
+            c.extend_with(s, 'add' + s)
         ])
+
+chord_index.dump('chords.txt')
 
 class Relationship():
     def __init__():
         pass
+
