@@ -1,8 +1,18 @@
+
+prettify_translation = str.maketrans(
+    'hMb#',
+    'ø△♭♯')
+def prettify(s):
+    return s.translate(prettify_translation).replace('dim', '°')
+
 class Interval:
     def __init__(self, semitones: int, symbol: str):
         self.semitones = semitones
         self.symbols = symbol
-
+        self.pretty = prettify(symbol)
+    
+    def __repr__self(self):
+        return self.pretty
 
 intervals: list[Interval] = [
     Interval(0, '1'),
@@ -34,11 +44,14 @@ for i in interval_index:
     interval_index[i.symbol] = i
 
 class Chord:
-    def __init__(self, intervals: list[str], symbol: list[str]):
+    def __init__(self, intervals: list[str], symbol: str):
         self.intervals = intervals
         self.symbol = symbol
     
-    def extend_with(self, intervals, symbol: str):
+    def __repr__(self):
+        return prettify(self.symbol) + ' (' + ' '.join(self.intervals) + ')'
+
+    def extend_with(self, intervals: list[str], symbol: str):
         return Chord(self.intervals + intervals, self.symbol + symbol)
 
 chord_index: dict[str,Chord] = dict()
@@ -83,34 +96,28 @@ add_chords_to_index([
 ])
 
 ### 9 chords
-for s in ['b9', '9', '#9']:
-    add_chords_to_index([
-        # no 5, no 7
-        Chord(['1', '3', s], '(no5)add' + s),
-        Chord(['1', 'b3', s], 'm(no5)add' + s),
-        # yes 5, no 7
-        Chord(['1', '3', '5', s], 'add' + s),
-        Chord(['1', 'b3', '5', s], 'm(add' + s),
-        # no 5, yes 7
-        Chord(['1', '3', '7', s], '(no5)' + s),
-        Chord(['1', 'b3', '7', s], 'm(no5)' + s),
-        Chord(['1', '3', 'M7', s], '(no5)M' + s),
-        Chord(['1', 'b3', 'M7', s], '(no5)mM' + s),
-        # yes 5, yes 7
-        Chord(['1', '3', '5', '7', s], s),
-        Chord(['1', 'b3', '5', '7', s], 'm' + s),
-        Chord(['1', '3', '5', 'M7', s], 'M' + s),
-        Chord(['1', 'b3', '5', 'M7', s], 'mM' + s),
-        # yes 5, yes 7 - dim
-        Chord(['1', 'b3', 'b5', '6', s], 'd' + s), # 6 is actually bb7
-        Chord(['1', 'b3', 'b5', '7', s], 'h' + s),
-        Chord(['1', 'b3', 'b5', '7', s], 'hM' + s),
-    ])
+# These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
+# Just trying to keep it simple at first.
+for c in list(chord_index.values()):
+    for s in ['b9', '9', '#9']:
+        add_chords_to_index([
+            c.extend_with([s], 'add' + s)
+        ])
 
 ### 11 chords
+# These are technically not the correct chord symbols, since '7add9add11' should just be written as '11'.
+# Just trying to keep it simple at first.
+for c in list(chord_index.values()):
+    for s in ['11', '#11']:
+        add_chords_to_index([
+            c.extend_with([s], 'add' + s)
+        ])
 
-prettify_translation = str.maketrans(
-    'dhMb#',
-    '°ø△♭♯')
-def prettify(s):
-    return s.translate(prettify_translation)
+### 13 chords
+# These are technically not the correct chord symbols, since '7add9add11add13' should just be written as '11'.
+# Just trying to keep it simple at first.
+for c in list(chord_index.values()):
+    for s in ['13', 'b13']:
+        add_chords_to_index([
+            c.extend_with([s], 'add' + s)
+        ])
