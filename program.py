@@ -101,11 +101,13 @@ for s in ['b9', '9', '#9']:
         Chord(['1', 'b3', '5', '7', s], 'm' + s),
         Chord(['1', '3', '5', 'M7', s], 'M' + s),
         Chord(['1', 'b3', '5', 'M7', s], 'mM' + s),
-        # dim
+        # yes 5, yes 7 - dim
         Chord(['1', 'b3', 'b5', '6', s], 'd' + s), # 6 is actually bb7
         Chord(['1', 'b3', 'b5', '7', s], 'h' + s),
         Chord(['1', 'b3', 'b5', '7', s], 'hM' + s),
     ])
+
+### 11 chords
 
 prettify_translation = str.maketrans(
     'dhMb#',
