@@ -218,47 +218,30 @@ def tuple_replace(t: tuple, a, b):
 relationships = Relationships()
 for c in chord_index.values():
     relationships.add_with_interval_omitted(
-        RelationshipType("remove 3", "add 3"), c, "3"
+        RelationshipType("neutralize", "make major"), c, "3"
     )
     relationships.add_with_interval_omitted(
-        RelationshipType("remove 3", "add b3"), c, "b3"
+        RelationshipType("neutralize", "make minor"), c, "b3"
     )
     relationships.add_with_interval_omitted(
-        RelationshipType("remove 5", "add 5"), c, "5"
+        RelationshipType("sparser", "denser"), c, "5"
     )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove 7", "add 7"), c, "7"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove M7", "add M7"), c, "M7"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove b9", "add b9"), c, "b9"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove 9", "add 9"), c, "9"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove #9", "add #9"), c, "#9"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove 11", "add 11"), c, "11"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove #11", "add #11"), c, "#11"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove b13", "add b13"), c, "b13"
-    )
-    relationships.add_with_interval_omitted(
-        RelationshipType("remove 13", "add 13"), c, "13"
-    )
-    relationships.add_with_interval_changed(
-        RelationshipType("minor to major", "major to minor"), c, "b3", "3"
-    )
-    relationships.add_with_interval_changed(
-        RelationshipType("7 to M7", "M7 to 7"), c, "7", "M7"
-    )
+    for i in ["7", "M7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
+        relationships.add_with_interval_omitted(
+            RelationshipType("de-extend", "extend"), c, i
+        )
+    for i1, i2 in [
+        ("b3", "3"),
+        ("7", "M7"),
+        ("b9", "9"),
+        ("b9", "#9"),
+        ("9", "#9"),
+        ("11", "#11"),
+        ("b13", "13"),
+    ]:
+        relationships.add_with_interval_changed(
+            RelationshipType("interchange", "interchange"), c, i1, i2
+        )
 
 with open("relationships.txt", "w", encoding="utf8") as f:
     f.truncate()
