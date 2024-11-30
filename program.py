@@ -152,13 +152,6 @@ for c in list(chord_index.values()):
     for s in ["11", "#11"]:
         chord_index.add_many([c.extend_with(s, "add" + s)])
 
-### 13 chords
-# These are technically not the correct chord symbols, since '7add9add11add13' should just be written as '11'.
-# Just trying to keep it simple at first.
-for c in list(chord_index.values()):
-    for s in ["13", "b13"]:
-        chord_index.add_many([c.extend_with(s, "add" + s)])
-
 chord_index.dump("chords.txt")
 
 
@@ -266,20 +259,6 @@ for c in chord_index.values():
     # Common practices on 13th chords:
     # Omit 5th and 9th, (and possibly 11th)
     # Omit 7th and 11th => equivalent to 6/9
-    for i in ["b9", "9"]:
-        relationships.add_with_intervals_omitted(
-            RelationshipType("sparser", "denser"), c, ["5", i]
-        )
-        for j in ["11", "#11"]:
-            relationships.add_with_intervals_omitted(
-                RelationshipType("sparser", "denser"), c, ["5", i, j]
-            )
-
-    for i in ["7", "M7"]:
-        for j in ["11", "#11"]:
-            relationships.add_with_intervals_omitted(
-                RelationshipType("sparser", "denser"), c, [i, j]
-            )
 
     # extensions
     for i in ["7", "M7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
