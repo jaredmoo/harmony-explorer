@@ -165,7 +165,6 @@ class ChordIndex:
 chord_index: ChordIndex = ChordIndex()
 chord_index.add_many(
     [
-        # basic
         Chord(("1", "3", "5"), ""),
         Chord(("1", "b3", "5"), "m"),
         # power
@@ -182,6 +181,9 @@ chord_index.add_many(
         ### 6
         Chord(("1", "3", "5", "6"), "6"),
         Chord(("1", "m3", "5", "6"), "m6"),
+        # sus
+        Chord(("1", "2", "5", "6"), "6sus2"),
+        Chord(("1", "4", "5", "6"), "6sus4"),
         ### 7 chords
         Chord(("1", "3", "5", "b7"), "7"),
         Chord(("1", "b3", "5", "b7"), "m7"),
@@ -199,22 +201,78 @@ chord_index.add_many(
         Chord(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
         Chord(("1", "b3", "b5", "b7"), "h7"),
         Chord(("1", "b3", "b5", "b7"), "hM7"),
+        # sus
+        Chord(("1", "2", "5", "b7"), "7sus2"),
+        Chord(("1", "4", "5", "b7"), "7sus4"),
+        Chord(("1", "2", "5", "7"), "M7sus2"),
+        Chord(("1", "4", "5", "7"), "M7sus4"),
     ]
 )
+
+### Extensions
+#
+# What I would like to do, is to generate ALL extensions, but then:
+# * Make the less common combinations less accessible via relationships.
+#   For example, different relationships could have higher or lower ranking,
+#   which could then guide you more towards more common chords or common
+#   practices (e.g. omitting 5's, and )
+# * Make the chord's internal intervals visible, especially b9's, which guide
+#   you towards removing the 'avoid notes'.
+#
+# Common practices on extensions based on the chord's function:
+#   * Piano with Johnny - Chord Substitution: 5 Levels from Beginner to Pro https://www.youtube.com/watch?v=IGBcnFSJb4c
+#       * On a major chord, add 6, 7, or 9
+#       * On a minor chord, add b7, 9, or 11
+#       * On a dominant 7 chord, add 9, b9, #9, #11, b13, or 13.
+#   * Using altered chord extensions https://www.reddit.com/r/musictheory/comments/fupzzd/comment/fme5c0q
+#       * The alterations are all about voice leading. This is why you are more free to use alterations
+#         on dominant chords, since those chords are leading to a clear target.
+#
+# Common practices on 9th chords:
+#   * 5 can be omitted.
+#
+# Common practices on 11th chords:
+#   * Woochia on 11th chords https://www.youtube.com/watch?v=gnLzPAEYcVE
+#   * https://en.m.wikipedia.org/wiki/Eleventh_chord
+# 3 can be omitted
+#   * This reduces the character of a dominant chord
+#   * This removes the b9 dissonance between 3 & 11.
+# 5 can be omitted
+#   * This removes the b9 dissonance between 5 & #11.
+# 11th can be raised on a major chord
+#   * This removes the b9 dissonance between 3 & 11.
+# b9 can be omitted if not in a dominant chord
+#   * This removes the b9 dissonance between 1 & b9.
+# Also note, that when 3 & 5 are emitted, 7 & 9 & 11 form a simple triad,
+# so this is exactly equivalent to a simple triad slash chord.
+#
+# Common practices on 13th chords:
+#   * Woochia on 13th chords https://www.youtube.com/watch?v=DFkSSkWhZk0
+#   * Why is there no straightforward way to play a 13th chord https://www.reddit.com/r/musictheory/comments/1161296/comment/j94k6ps
+# Omit 5th and 9th, (and possibly 11th)
+# Omit 7th and 11th => equivalent to 6/9
 
 ### 9 chords
 # These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
-    for s in ["b9", "9", "#9"]:
-        chord_index.add_many([c.extend_with(s, "add" + s)])
+    # See note above about not generating rare chords.
+    chord_index.add_many([c.extend_with("9", "add9")])
+
 
 ### 11 chords
 # These are technically not the correct chord symbols, since '7add9add11' should just be written as '11'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
-    for s in ["11", "#11"]:
-        chord_index.add_many([c.extend_with(s, "add" + s)])
+    # See note above about not generating rare chords.
+    if "5" in c.intervals:
+        continue
+
+    if "3" not in c.intervals:
+        chord_index.add_many([c.extend_with("11", "add11")])
+
+    if "b3" not in c.intervals:
+        chord_index.add_many([c.extend_with("#11", "add#11")])
 
 chord_index.dump("chords_all.txt")
 for s in scale_index.values():
@@ -297,18 +355,6 @@ for c in chord_index.values():
         RelationshipType("sparser", "denser"), c, "5"
     )
 
-    # Common practices on 11th chords:
-    # 3 can be omitted
-    #   * This reduces the character of a dominant chord
-    #   * This removes the b9 dissonance between 3 & 11.
-    # 5 can be omitted
-    #   * This removes the b9 dissonance between 5 & #11.
-    # 11th can be raised on a major chord
-    #   * This removes the b9 dissonance between 3 & 11.
-    # b9 can be omitted if not in a dominant chord
-    #   * This removes the b9 dissonance between 1 & b9.
-    #
-    # Omitting only '5' is already covered by 'sparser' relationship above.
     for x in ("b3", "3"):
         for y in ("11", "#11"):
             # TODO: Add comments to these relationships
@@ -321,10 +367,6 @@ for c in chord_index.values():
             relationships.add_with_intervals_omitted(
                 RelationshipType("sparser", "denser"), c, [x, "b9"]
             )
-
-    # Common practices on 13th chords:
-    # Omit 5th and 9th, (and possibly 11th)
-    # Omit 7th and 11th => equivalent to 6/9
 
     # extensions
     for i in ["b7", "7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
