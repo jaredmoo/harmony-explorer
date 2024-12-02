@@ -1,6 +1,9 @@
 from scale_label import scale_index
 from chord_label import chord_label_index
 from src.relationship import relationships
+import os
+
+os.mkdir("data")
 
 chord_label_index.dump("data/chord_labels_chromatic.txt")
 for s in scale_index.values():
