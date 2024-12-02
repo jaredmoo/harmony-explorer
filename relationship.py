@@ -74,7 +74,8 @@ class Relationships(list):
             if c2 is not None:
                 self.add(type, c, c2)
 
-#todo relationships:
+
+# todo relationships:
 # interchange
 #   major/minor to sus
 #   minor to aug

@@ -1,12 +1,13 @@
 from interval import interval
+from typing import Iterable
 
 
 class Scale:
     @classmethod
-    def from_symbols(cls, name, interval_symbols: list[str]):
+    def from_symbols(cls, name, interval_symbols: Iterable[str]):
         return Scale(name, tuple(map(interval, interval_symbols)))
 
-    def __init__(self, name, intervals: tuple[str]):
+    def __init__(self, name, intervals: Iterable[str]):
         self.name = name
         self.intervals = intervals
 
@@ -18,7 +19,7 @@ class ScaleIndex:
     def add(self, scale: Scale):
         self._by_name[scale.name] = scale
 
-    def add_many(self, scales: list[Scale]):
+    def add_many(self, scales: Iterable[Scale]):
         for s in scales:
             self.add(s)
 

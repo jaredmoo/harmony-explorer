@@ -1,15 +1,16 @@
 from interval import interval, Interval
 from prettify import prettify
 from scale import Scale
+from typing import Iterable
 import io
 
 
 class ChordLabel:
     @classmethod
-    def from_symbols(cls, interval_symbols: tuple[str], symbol: str):
+    def from_symbols(cls, interval_symbols: Iterable[str], symbol: str):
         return ChordLabel(tuple(map(interval, interval_symbols)), symbol)
 
-    def __init__(self, intervals: tuple[Interval], symbol: str):
+    def __init__(self, intervals: Iterable[Interval], symbol: str):
         self.intervals = intervals
         self.symbol = symbol
 
@@ -66,7 +67,7 @@ class ChordLabelIndex:
         self._by_symbol[chord.symbol] = chord
         self._by_intervals[chord.intervals] = chord
 
-    def add_many(self, chords: list[ChordLabel]):
+    def add_many(self, chords: Iterable[ChordLabel]):
         for c in chords:
             self.add(c)
 
@@ -76,7 +77,7 @@ class ChordLabelIndex:
     def get_symbol(self, s: str):
         return self._by_symbol.get(s, None)
 
-    def get_intervals(self, i: tuple[str]):
+    def get_intervals(self, i: Iterable[str]):
         return self._by_intervals.get(i, None)
 
     def dump(self, file: str):
