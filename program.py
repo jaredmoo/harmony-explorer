@@ -1,57 +1,17 @@
+from interval import interval, Interval
+from prettify import prettify
 from collections import namedtuple
 import io
 
-prettify_translation = str.maketrans("hMb#", "ø△♭♯")
-
-
-def prettify(s):
-    return s.translate(prettify_translation).replace("dim", "°")
-
-
-class Interval:
-    def __init__(self, semitones: int, symbol: str):
-        self.semitones = semitones
-        self.symbols = symbol
-        self.pretty = prettify(symbol)
-
-    def __repr__(self):
-        return self.pretty
-
-
-intervals: list[Interval] = [
-    Interval(0, "1"),
-    Interval(1, "b2"),
-    Interval(2, "2"),
-    Interval(3, "b3"),
-    Interval(4, "3"),
-    Interval(5, "4"),
-    Interval(6, "b5"),
-    Interval(7, "5"),
-    Interval(8, "b6"),
-    Interval(9, "6"),
-    Interval(10, "b7"),
-    Interval(11, "7"),
-    Interval(12, "8"),
-    Interval(13, "b9"),
-    Interval(14, "9"),
-    Interval(15, "#9"),
-    Interval(16, "10"),
-    Interval(17, "11"),
-    Interval(18, "#11"),
-    Interval(19, "12"),
-    Interval(20, "b13"),
-    Interval(21, "13"),
-]
-
-interval_index = dict()
-for i in interval_index:
-    interval_index[i.symbol] = i
-
 
 class Scale:
-    def __init__(self, name, intervals: list[str]):
+    @classmethod
+    def from_symbols(cls, name, interval_symbols: list[str]):
+        return Scale(name, tuple(map(interval, interval_symbols)))
+
+    def __init__(self, name, intervals: tuple[str]):
         self.name = name
-        self.intervals = tuple(intervals)
+        self.intervals = intervals
 
 
 class ScaleIndex:
@@ -102,16 +62,22 @@ scale_index.add_many(
 )
 
 
-class Chord:
-    def __init__(self, intervals: tuple[str], symbol: str):
+class ChordSuffix:
+    @classmethod
+    def from_symbols(cls, interval_symbols: tuple[str], symbol: str):
+        return ChordSuffix(tuple(map(interval, interval_symbols)), symbol)
+
+    def __init__(self, intervals: tuple[Interval], symbol: str):
         self.intervals = intervals
         self.symbol = symbol
 
     def __repr__(self):
-        return prettify(self.symbol) + " (" + " ".join(self.intervals) + ")"
+        return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
 
-    def extend_with(self, interval: str, symbol: str):
-        return Chord(self.intervals + (interval,), self.symbol + symbol)
+    def extend_with_symbol(self, interval_symbol: str, symbol: str):
+        return ChordSuffix(
+            self.intervals + (interval(interval_symbol),), self.symbol + symbol
+        )
 
     def is_in(self, scale: Scale):
         for i in self.intervals:
@@ -128,13 +94,13 @@ class ChordIndex:
     def __repr__(self):
         return self.values().__repr__()
 
-    def add(self, chord: Chord):
+    def add(self, chord: ChordSuffix):
         if chord.symbol in self._by_symbol.keys():
             raise KeyError(chord.symbol)
         self._by_symbol[chord.symbol] = chord
         self._by_intervals[chord.intervals] = chord
 
-    def add_many(self, chords: list[Chord]):
+    def add_many(self, chords: list[ChordSuffix]):
         for c in chords:
             self.add(c)
 
@@ -165,47 +131,47 @@ class ChordIndex:
 chord_index: ChordIndex = ChordIndex()
 chord_index.add_many(
     [
-        Chord(("1", "3", "5"), ""),
-        Chord(("1", "b3", "5"), "m"),
+        ChordSuffix.from_symbols(("1", "3", "5"), ""),
+        ChordSuffix.from_symbols(("1", "b3", "5"), "m"),
         # power
-        Chord(("1", "5"), "5"),
+        ChordSuffix.from_symbols(("1", "5"), "5"),
         # no5
-        Chord(("1", "3"), "(no5)"),
-        Chord(("1", "b3"), "m(no5)"),
+        ChordSuffix.from_symbols(("1", "3"), "(no5)"),
+        ChordSuffix.from_symbols(("1", "b3"), "m(no5)"),
         # dim/aug
-        Chord(("1", "b3", "b5"), "dim"),
-        Chord(("1", "3", "b6"), "+"),  # b6 is actually #5
+        ChordSuffix.from_symbols(("1", "b3", "b5"), "dim"),
+        ChordSuffix.from_symbols(("1", "3", "b6"), "+"),  # b6 is actually #5
         # sus
-        Chord(("1", "2", "5"), "sus2"),
-        Chord(("1", "4", "5"), "sus4"),
+        ChordSuffix.from_symbols(("1", "2", "5"), "sus2"),
+        ChordSuffix.from_symbols(("1", "4", "5"), "sus4"),
         ### 6
-        Chord(("1", "3", "5", "6"), "6"),
-        Chord(("1", "m3", "5", "6"), "m6"),
+        ChordSuffix.from_symbols(("1", "3", "5", "6"), "6"),
+        ChordSuffix.from_symbols(("1", "b3", "5", "6"), "m6"),
         # sus
-        Chord(("1", "2", "5", "6"), "6sus2"),
-        Chord(("1", "4", "5", "6"), "6sus4"),
+        ChordSuffix.from_symbols(("1", "2", "5", "6"), "6sus2"),
+        ChordSuffix.from_symbols(("1", "4", "5", "6"), "6sus4"),
         ### 7 chords
-        Chord(("1", "3", "5", "b7"), "7"),
-        Chord(("1", "b3", "5", "b7"), "m7"),
-        Chord(("1", "3", "5", "7"), "M7"),
-        Chord(("1", "b3", "5", "7"), "mM7"),
+        ChordSuffix.from_symbols(("1", "3", "5", "b7"), "7"),
+        ChordSuffix.from_symbols(("1", "b3", "5", "b7"), "m7"),
+        ChordSuffix.from_symbols(("1", "3", "5", "7"), "M7"),
+        ChordSuffix.from_symbols(("1", "b3", "5", "7"), "mM7"),
         # power
-        Chord(("1", "5", "b7"), "57"),
-        Chord(("1", "5", "7"), "5M7"),
+        ChordSuffix.from_symbols(("1", "5", "b7"), "57"),
+        ChordSuffix.from_symbols(("1", "5", "7"), "5M7"),
         # no5
-        Chord(("1", "3", "b7"), "(no5)7"),
-        Chord(("1", "b3", "b7"), "m(no5)7"),
-        Chord(("1", "3", "7"), "(no5)M7"),
-        Chord(("1", "b3", "7"), "m(no5)M7"),
+        ChordSuffix.from_symbols(("1", "3", "b7"), "(no5)7"),
+        ChordSuffix.from_symbols(("1", "b3", "b7"), "m(no5)7"),
+        ChordSuffix.from_symbols(("1", "3", "7"), "(no5)M7"),
+        ChordSuffix.from_symbols(("1", "b3", "7"), "m(no5)M7"),
         # dim
-        Chord(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
-        Chord(("1", "b3", "b5", "b7"), "h7"),
-        Chord(("1", "b3", "b5", "b7"), "hM7"),
+        ChordSuffix.from_symbols(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
+        ChordSuffix.from_symbols(("1", "b3", "b5", "b7"), "h7"),
+        ChordSuffix.from_symbols(("1", "b3", "b5", "b7"), "hM7"),
         # sus
-        Chord(("1", "2", "5", "b7"), "7sus2"),
-        Chord(("1", "4", "5", "b7"), "7sus4"),
-        Chord(("1", "2", "5", "7"), "M7sus2"),
-        Chord(("1", "4", "5", "7"), "M7sus4"),
+        ChordSuffix.from_symbols(("1", "2", "5", "b7"), "7sus2"),
+        ChordSuffix.from_symbols(("1", "4", "5", "b7"), "7sus4"),
+        ChordSuffix.from_symbols(("1", "2", "5", "7"), "M7sus2"),
+        ChordSuffix.from_symbols(("1", "4", "5", "7"), "M7sus4"),
     ]
 )
 
@@ -256,23 +222,24 @@ chord_index.add_many(
 # These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
-    # See note above about not generating rare chords.
-    chord_index.add_many([c.extend_with("9", "add9")])
+    chord_index.add_many([c.extend_with_symbol("b9", "addb9")])
+    chord_index.add_many([c.extend_with_symbol("9", "add9")])
+    chord_index.add_many([c.extend_with_symbol("#9", "add#9")])
 
 
 ### 11 chords
 # These are technically not the correct chord symbols, since '7add9add11' should just be written as '11'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
-    # See note above about not generating rare chords.
+    # See note above about not generating rare chords (i.e. with internal b9's).
     if "5" in c.intervals:
         continue
 
     if "3" not in c.intervals:
-        chord_index.add_many([c.extend_with("11", "add11")])
+        chord_index.add_many([c.extend_with_symbol("11", "add11")])
 
     if "b3" not in c.intervals:
-        chord_index.add_many([c.extend_with("#11", "add#11")])
+        chord_index.add_many([c.extend_with_symbol("#11", "add#11")])
 
 chord_index.dump("chords_all.txt")
 for s in scale_index.values():
@@ -298,15 +265,17 @@ class Relationships(list):
     def __iter__(self):
         return self._r.__iter__()
 
-    def add(self, type: RelationshipType, c1: Chord, c2: Chord):
+    def add(self, type: RelationshipType, c1: ChordSuffix, c2: ChordSuffix):
         self._r.append(Relationship(type, c1, c2))
         self._r.append(Relationship(type.inverse(), c2, c1))
 
-    def add_with_interval_omitted(self, type: RelationshipType, c: Chord, i: Interval):
+    def add_with_interval_omitted(
+        self, type: RelationshipType, c: ChordSuffix, i: Interval
+    ):
         self.add_with_intervals_omitted(type, c, [i])
 
     def add_with_intervals_omitted(
-        self, type: RelationshipType, c: Chord, ii: list[Interval]
+        self, type: RelationshipType, c: ChordSuffix, ii: list[Interval]
     ):
         intervals2 = list(c.intervals)
         for i in ii:
@@ -319,7 +288,7 @@ class Relationships(list):
             self.add(type, c, c2)
 
     def add_with_interval_changed(
-        self, type: RelationshipType, c: Chord, i1: Interval, i2: Interval
+        self, type: RelationshipType, c: ChordSuffix, i1: Interval, i2: Interval
     ):
         if i1 in c.intervals:
             intervals2 = tuple_replace(c.intervals, i1, i2)
