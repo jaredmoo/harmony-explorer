@@ -147,8 +147,9 @@ chord_index.add_many(
         # no5
         ChordSuffix.from_symbols(("1", "3"), "(no5)"),
         ChordSuffix.from_symbols(("1", "b3"), "m(no5)"),
-        # dim/aug
+        # dim
         ChordSuffix.from_symbols(("1", "b3", "b5"), "dim"),
+        # aug
         ChordSuffix.from_symbols(("1", "3", "#5"), "+"),
         # sus
         ChordSuffix.from_symbols(("1", "2", "5"), "sus2"),
@@ -176,6 +177,9 @@ chord_index.add_many(
         ChordSuffix.from_symbols(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
         ChordSuffix.from_symbols(("1", "b3", "b5", "b7"), "h7"),
         ChordSuffix.from_symbols(("1", "b3", "b5", "b7"), "hM7"),
+        # aug
+        ChordSuffix.from_symbols(("1", "3", "#5", "b7"), "+7"),
+        ChordSuffix.from_symbols(("1", "3", "#5", "7"), "+M7"),
         # sus
         ChordSuffix.from_symbols(("1", "2", "5", "b7"), "7sus2"),
         ChordSuffix.from_symbols(("1", "4", "5", "b7"), "7sus4"),
