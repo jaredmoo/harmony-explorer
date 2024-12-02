@@ -74,6 +74,21 @@ class Relationships(list):
             if c2 is not None:
                 self.add(type, c, c2)
 
+#todo relationships:
+# interchange
+#   major/minor to sus
+#   minor to aug
+# consonance/dissonance
+#   add/remove note
+#   remove internal b9
+# slash
+# substitution:
+#   dominant augmented sub
+#   dominant diminished sub
+#   dominant tritone sub
+#   functional sub (tonic/subdominant/dominant)
+#   backdoor dominant sub
+# invert
 
 relationships = Relationships()
 for c in chord_label_index.values():
