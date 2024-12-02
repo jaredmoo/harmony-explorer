@@ -18,7 +18,7 @@ class ChordLabel:
 
         new_intervals = self.intervals + (extension_interval,)
 
-        new_chord_symbol = self.symbol + "add" + extension_interval.symbol
+        new_chord_symbol = self.symbol + "(add" + extension_interval.symbol + ")"
         if interval("b7") in self.intervals or interval("7") in self.intervals:
             if "9" in extension_interval.symbol:
                 # We are extending a (M)7 to a (M)(b/#)9 chord
