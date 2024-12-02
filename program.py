@@ -77,10 +77,14 @@ class ChordSuffix:
     def extend_with_symbol(self, extension_interval_symbol: str):
         new_intervals = self.intervals + (interval(extension_interval_symbol),)
 
-        if "7" in self.symbol and "9" in extension_interval_symbol:
-            new_chord_symbol = self.symbol.replace("7", extension_interval_symbol)
-        else:
-            new_chord_symbol = self.symbol + "add" + extension_interval_symbol
+        new_chord_symbol = self.symbol + "add" + extension_interval_symbol
+        if interval("b7") in self.intervals or interval("7") in self.intervals:
+            if "9" in extension_interval_symbol:
+                # We are extending a (b)7 to a (b/#)9 chord
+                new_chord_symbol = self.symbol.replace("7", extension_interval_symbol)
+            elif interval("9") in self.intervals and "11" in extension_interval_symbol:
+                # We are extending a 9 chord to an 11 chord
+                new_chord_symbol = self.symbol.replace("9", extension_interval_symbol)
 
         return ChordSuffix(new_intervals, new_chord_symbol)
 
@@ -233,6 +237,10 @@ for c in list(chord_index.values()):
     if interval("2") in c.intervals:
         continue
 
+    # dim chords are already dissonant enough to not extend them.
+    if interval("b5") in c.intervals:
+        continue
+
     chord_index.add_many([c.extend_with_symbol("b9")])
     chord_index.add_many([c.extend_with_symbol("9")])
     chord_index.add_many([c.extend_with_symbol("#9")])
@@ -248,6 +256,10 @@ for c in list(chord_index.values()):
 
     # 11 is octave away from 4, so 11 & sus4 are redundant, and #11 & sus4 are b9 away from each other.
     if interval("4") in c.intervals:
+        continue
+
+    # dim chords are already dissonant enough to not extend them.
+    if interval("b5") in c.intervals:
         continue
 
     if interval("3") not in c.intervals:
