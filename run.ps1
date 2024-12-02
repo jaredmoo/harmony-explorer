@@ -1,3 +1,3 @@
-black *.py
-mypy program.py
-python program.py
+black src\*.py
+mypy src\program.py
+python src\program.py
