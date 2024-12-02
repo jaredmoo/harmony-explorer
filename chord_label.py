@@ -1,6 +1,6 @@
 from interval import interval, Interval
 from prettify import prettify
-from scale import Scale
+from scale_label import ScaleLabel
 from typing import Iterable
 import io
 
@@ -42,7 +42,7 @@ class ChordLabel:
 
         return ChordLabel(new_intervals, new_chord_symbol)
 
-    def is_in(self, scale: Scale):
+    def is_in(self, scale: ScaleLabel):
         for i in self.intervals:
             if i not in scale.intervals:
                 return False
@@ -84,7 +84,7 @@ class ChordLabelIndex:
             for i in x:
                 print(self._by_intervals[i], file=f)
 
-    def restrict(self, scale: Scale):
+    def restrict(self, scale: ScaleLabel):
         chords = [c for c in self.values() if c.is_in(scale)]
         restricted = ChordLabelIndex()
         restricted.add_many(chords)

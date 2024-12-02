@@ -1,4 +1,4 @@
-from scale import scale_index
+from scale_label import scale_index
 from chord_label import chord_label_index
 from relationship import relationships
 
