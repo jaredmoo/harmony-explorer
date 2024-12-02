@@ -11,7 +11,11 @@ class Interval:
         return self.pretty
 
     def __lt__(self, other):
-        return self.semitones < other.semitones and self.symbol < other.symbol
+        if self.semitones != other.semitones:
+            return self.semitones < other.semitones
+        else:
+            # semitones are equal
+            return self.symbol < other.symbol
 
 
 _intervals: list = [
@@ -23,6 +27,7 @@ _intervals: list = [
     Interval(5, "4"),
     Interval(6, "b5"),
     Interval(7, "5"),
+    Interval(8, "#5"),
     Interval(8, "b6"),
     Interval(9, "6"),
     Interval(10, "b7"),
