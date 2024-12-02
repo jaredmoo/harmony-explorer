@@ -49,5 +49,10 @@ for i in _intervals:
     _interval_index[i.symbol] = i
 
 
-def interval(symbol: str):
-    return _interval_index[symbol]
+def interval(x) -> Interval:
+    if isinstance(x, str):
+        return _interval_index[x]
+    elif isinstance(x, Interval):
+        return x
+    else:
+        raise TypeError(type(x))

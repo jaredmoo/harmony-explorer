@@ -16,30 +16,32 @@ class ChordLabel:
     def __repr__(self):
         return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
 
-    def extend_with_symbol(self, extension_interval_symbol: str):
-        new_intervals = self.intervals + (interval(extension_interval_symbol),)
+    def extend_with(self, extension_interval: str | Interval):
+        extension_interval = interval(extension_interval)
 
-        new_chord_symbol = self.symbol + "add" + extension_interval_symbol
+        new_intervals = self.intervals + (extension_interval,)
+
+        new_chord_symbol = self.symbol + "add" + extension_interval.symbol
         if interval("b7") in self.intervals or interval("7") in self.intervals:
-            if "9" in extension_interval_symbol:
+            if "9" in extension_interval.symbol:
                 # We are extending a (M)7 to a (M)(b/#)9 chord
-                new_chord_symbol = self.symbol.replace("7", extension_interval_symbol)
-            elif interval("9") in self.intervals and "11" in extension_interval_symbol:
+                new_chord_symbol = self.symbol.replace("7", extension_interval.symbol)
+            elif interval("9") in self.intervals and "11" in extension_interval.symbol:
                 # We are extending a 9 chord to a (#)11 chord
-                new_chord_symbol = self.symbol.replace("9", extension_interval_symbol)
-            elif "11" == extension_interval_symbol:
+                new_chord_symbol = self.symbol.replace("9", extension_interval.symbol)
+            elif "11" == extension_interval.symbol:
                 # We are extending a b/#9 chord with an 11
                 if interval("b9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("b9", "11(b9)")
                 elif interval("#9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("#9", "11(#9)")
-            elif "#11" == extension_interval_symbol and (
+            elif "#11" == extension_interval.symbol and (
                 interval("b9") in self.intervals
                 or interval("9") in self.intervals
                 or interval("#9") in self.intervals
             ):
                 # We are extending a (b/#)9 chord with a #11
-                new_chord_symbol = self.symbol + extension_interval_symbol
+                new_chord_symbol = self.symbol + extension_interval.symbol
 
         return ChordLabel(new_intervals, new_chord_symbol)
 
@@ -200,9 +202,9 @@ for c in list(chord_label_index.values()):
     if interval("b5") in c.intervals:
         continue
 
-    chord_label_index.add_many([c.extend_with_symbol("b9")])
-    chord_label_index.add_many([c.extend_with_symbol("9")])
-    chord_label_index.add_many([c.extend_with_symbol("#9")])
+    chord_label_index.add_many([c.extend_with("b9")])
+    chord_label_index.add_many([c.extend_with("9")])
+    chord_label_index.add_many([c.extend_with("#9")])
 
 
 ### 11 chords
@@ -222,7 +224,7 @@ for c in list(chord_label_index.values()):
         continue
 
     if interval("3") not in c.intervals:
-        chord_label_index.add_many([c.extend_with_symbol("11")])
+        chord_label_index.add_many([c.extend_with("11")])
 
     if interval("b3") not in c.intervals:
-        chord_label_index.add_many([c.extend_with_symbol("#11")])
+        chord_label_index.add_many([c.extend_with("#11")])

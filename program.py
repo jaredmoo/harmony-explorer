@@ -1,4 +1,4 @@
-from interval import Interval
+from interval import interval, Interval
 from scale import scale_index
 from chord_label import chord_label_index, ChordLabel
 from collections import namedtuple
@@ -33,13 +33,15 @@ class Relationships(list):
         self._r.append(Relationship(type.inverse(), c2, c1))
 
     def add_with_interval_omitted(
-        self, type: RelationshipType, c: ChordLabel, i: Interval
+        self, type: RelationshipType, c: ChordLabel, i: str | Interval
     ):
         self.add_with_intervals_omitted(type, c, [i])
 
     def add_with_intervals_omitted(
-        self, type: RelationshipType, c: ChordLabel, ii: list[Interval]
+        self, type: RelationshipType, c: ChordLabel, ii: list[str] | list[Interval]
     ):
+        ii = map(interval, ii)
+
         intervals2 = list(c.intervals)
         for i in ii:
             if i not in c.intervals:
@@ -51,8 +53,14 @@ class Relationships(list):
             self.add(type, c, c2)
 
     def add_with_interval_changed(
-        self, type: RelationshipType, c: ChordLabel, i1: Interval, i2: Interval
+        self,
+        type: RelationshipType,
+        c: ChordLabel,
+        i1: str | Interval,
+        i2: str | Interval,
     ):
+        i1 = interval(i1)
+        i2 = interval(i2)
         if i1 in c.intervals:
             intervals2 = tuple_replace(c.intervals, i1, i2)
             c2 = chord_label_index.get_intervals(intervals2)
