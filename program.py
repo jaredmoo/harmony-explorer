@@ -74,10 +74,15 @@ class ChordSuffix:
     def __repr__(self):
         return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
 
-    def extend_with_symbol(self, interval_symbol: str, symbol: str):
-        return ChordSuffix(
-            self.intervals + (interval(interval_symbol),), self.symbol + symbol
-        )
+    def extend_with_symbol(self, extension_interval_symbol: str):
+        new_intervals = self.intervals + (interval(extension_interval_symbol),)
+
+        if "7" in self.symbol and "9" in extension_interval_symbol:
+            new_chord_symbol = self.symbol.replace("7", extension_interval_symbol)
+        else:
+            new_chord_symbol = self.symbol + "add" + extension_interval_symbol
+
+        return ChordSuffix(new_intervals, new_chord_symbol)
 
     def is_in(self, scale: Scale):
         for i in self.intervals:
@@ -222,9 +227,9 @@ chord_index.add_many(
 # These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
-    chord_index.add_many([c.extend_with_symbol("b9", "addb9")])
-    chord_index.add_many([c.extend_with_symbol("9", "add9")])
-    chord_index.add_many([c.extend_with_symbol("#9", "add#9")])
+    chord_index.add_many([c.extend_with_symbol("b9")])
+    chord_index.add_many([c.extend_with_symbol("9")])
+    chord_index.add_many([c.extend_with_symbol("#9")])
 
 
 ### 11 chords
@@ -236,10 +241,10 @@ for c in list(chord_index.values()):
         continue
 
     if "3" not in c.intervals:
-        chord_index.add_many([c.extend_with_symbol("11", "add11")])
+        chord_index.add_many([c.extend_with_symbol("11")])
 
     if "b3" not in c.intervals:
-        chord_index.add_many([c.extend_with_symbol("#11", "add#11")])
+        chord_index.add_many([c.extend_with_symbol("#11")])
 
 chord_index.dump("chords_all.txt")
 for s in scale_index.values():
