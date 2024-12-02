@@ -80,17 +80,23 @@ class ChordSuffix:
         new_chord_symbol = self.symbol + "add" + extension_interval_symbol
         if interval("b7") in self.intervals or interval("7") in self.intervals:
             if "9" in extension_interval_symbol:
-                # We are extending a (b)7 to a (b/#)9 chord
+                # We are extending a (M)7 to a (M)(b/#)9 chord
                 new_chord_symbol = self.symbol.replace("7", extension_interval_symbol)
             elif interval("9") in self.intervals and "11" in extension_interval_symbol:
-                # We are extending a 9 chord to an 11 chord
+                # We are extending a 9 chord to a (#)11 chord
                 new_chord_symbol = self.symbol.replace("9", extension_interval_symbol)
-            elif (
+            elif "11" == extension_interval_symbol:
+                # We are extending a b/#9 chord with an 11
+                if interval("b9") in self.intervals:
+                    new_chord_symbol = self.symbol.replace("b9", "11(b9)")
+                elif interval("#9") in self.intervals:
+                    new_chord_symbol = self.symbol.replace("#9", "11(#9)")
+            elif "#11" == extension_interval_symbol and (
                 interval("b9") in self.intervals
                 or interval("9") in self.intervals
                 or interval("#9") in self.intervals
-            ) and "#11" == extension_interval_symbol:
-                # We are extending a (b/#9 chord to an #11 chord
+            ):
+                # We are extending a (b/#)9 chord with a #11
                 new_chord_symbol = self.symbol + extension_interval_symbol
 
         return ChordSuffix(new_intervals, new_chord_symbol)
