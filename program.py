@@ -227,6 +227,12 @@ chord_index.add_many(
 # These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
+    # 9 is octave away from 2, so 9 & sus2 are redundant, and #9 & sus2 are a b9 away from each other.
+    # b9 & 2 are a M7 away from each other, but it's too dissonant to include for now until we have
+    # better relationships implemented.
+    if interval("2") in c.intervals:
+        continue
+
     chord_index.add_many([c.extend_with_symbol("b9")])
     chord_index.add_many([c.extend_with_symbol("9")])
     chord_index.add_many([c.extend_with_symbol("#9")])
@@ -237,13 +243,17 @@ for c in list(chord_index.values()):
 # Just trying to keep it simple at first.
 for c in list(chord_index.values()):
     # See note above about not generating rare chords (i.e. with internal b9's).
-    if "5" in c.intervals:
+    if interval("5") in c.intervals:
         continue
 
-    if "3" not in c.intervals:
+    # 11 is octave away from 4, so 11 & sus4 are redundant, and #11 & sus4 are b9 away from each other.
+    if interval("4") in c.intervals:
+        continue
+
+    if interval("3") not in c.intervals:
         chord_index.add_many([c.extend_with_symbol("11")])
 
-    if "b3" not in c.intervals:
+    if interval("b3") not in c.intervals:
         chord_index.add_many([c.extend_with_symbol("#11")])
 
 chord_index.dump("chords_all.txt")
