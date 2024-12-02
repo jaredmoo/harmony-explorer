@@ -1,15 +1,11 @@
-from interval import interval
+from interval import interval, Interval
 from typing import Iterable
 
 
 class Scale:
-    @classmethod
-    def from_symbols(cls, name, interval_symbols: Iterable[str]):
-        return Scale(name, tuple(map(interval, interval_symbols)))
-
-    def __init__(self, name, intervals: Iterable[str]):
+    def __init__(self, name, intervals: Iterable[str] | Iterable[Interval]):
         self.name = name
-        self.intervals = intervals
+        self.intervals = tuple(map(interval, intervals))
 
 
 class ScaleIndex:
@@ -48,8 +44,8 @@ scale_index.add_many(
         ),
         Scale(
             "locrian",
-            ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "b11", "#11"],
-        ),  # #11 is actually b12
+            ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "b11", "b12"],
+        ),
         Scale("pentatonic", ["1", "2", "4", "5", "6", "8", "9", "11"]),
         Scale("minor pentatonic", ["1", "b3", "4", "5", "b7", "8", "b10", "11"]),
         Scale(

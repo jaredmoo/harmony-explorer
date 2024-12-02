@@ -6,12 +6,8 @@ import io
 
 
 class ChordLabel:
-    @classmethod
-    def from_symbols(cls, interval_symbols: Iterable[str], symbol: str):
-        return ChordLabel(tuple(map(interval, interval_symbols)), symbol)
-
-    def __init__(self, intervals: Iterable[Interval], symbol: str):
-        self.intervals = intervals
+    def __init__(self, intervals: Iterable[str] | Iterable[Interval], symbol: str):
+        self.intervals = tuple(map(interval, intervals))
         self.symbol = symbol
 
     def __repr__(self):
@@ -98,51 +94,51 @@ class ChordLabelIndex:
 chord_label_index: ChordLabelIndex = ChordLabelIndex()
 chord_label_index.add_many(
     [
-        ChordLabel.from_symbols(("1", "3", "5"), ""),
-        ChordLabel.from_symbols(("1", "b3", "5"), "m"),
+        ChordLabel(("1", "3", "5"), ""),
+        ChordLabel(("1", "b3", "5"), "m"),
         # power
-        ChordLabel.from_symbols(("1", "5"), "5"),
+        ChordLabel(("1", "5"), "5"),
         # no5
-        ChordLabel.from_symbols(("1", "3"), "(no5)"),
-        ChordLabel.from_symbols(("1", "b3"), "m(no5)"),
+        ChordLabel(("1", "3"), "(no5)"),
+        ChordLabel(("1", "b3"), "m(no5)"),
         # dim
-        ChordLabel.from_symbols(("1", "b3", "b5"), "dim"),
+        ChordLabel(("1", "b3", "b5"), "dim"),
         # aug
-        ChordLabel.from_symbols(("1", "3", "#5"), "+"),
+        ChordLabel(("1", "3", "#5"), "+"),
         # sus
-        ChordLabel.from_symbols(("1", "2", "5"), "sus2"),
-        ChordLabel.from_symbols(("1", "4", "5"), "sus4"),
+        ChordLabel(("1", "2", "5"), "sus2"),
+        ChordLabel(("1", "4", "5"), "sus4"),
         ### 6
-        ChordLabel.from_symbols(("1", "3", "5", "6"), "6"),
-        ChordLabel.from_symbols(("1", "b3", "5", "6"), "m6"),
+        ChordLabel(("1", "3", "5", "6"), "6"),
+        ChordLabel(("1", "b3", "5", "6"), "m6"),
         # sus
-        ChordLabel.from_symbols(("1", "2", "5", "6"), "6sus2"),
-        ChordLabel.from_symbols(("1", "4", "5", "6"), "6sus4"),
+        ChordLabel(("1", "2", "5", "6"), "6sus2"),
+        ChordLabel(("1", "4", "5", "6"), "6sus4"),
         ### 7 chords
-        ChordLabel.from_symbols(("1", "3", "5", "b7"), "7"),
-        ChordLabel.from_symbols(("1", "b3", "5", "b7"), "m7"),
-        ChordLabel.from_symbols(("1", "3", "5", "7"), "M7"),
-        ChordLabel.from_symbols(("1", "b3", "5", "7"), "mM7"),
+        ChordLabel(("1", "3", "5", "b7"), "7"),
+        ChordLabel(("1", "b3", "5", "b7"), "m7"),
+        ChordLabel(("1", "3", "5", "7"), "M7"),
+        ChordLabel(("1", "b3", "5", "7"), "mM7"),
         # power
-        ChordLabel.from_symbols(("1", "5", "b7"), "57"),
-        ChordLabel.from_symbols(("1", "5", "7"), "5M7"),
+        ChordLabel(("1", "5", "b7"), "57"),
+        ChordLabel(("1", "5", "7"), "5M7"),
         # no5
-        ChordLabel.from_symbols(("1", "3", "b7"), "(no5)7"),
-        ChordLabel.from_symbols(("1", "b3", "b7"), "m(no5)7"),
-        ChordLabel.from_symbols(("1", "3", "7"), "(no5)M7"),
-        ChordLabel.from_symbols(("1", "b3", "7"), "m(no5)M7"),
+        ChordLabel(("1", "3", "b7"), "(no5)7"),
+        ChordLabel(("1", "b3", "b7"), "m(no5)7"),
+        ChordLabel(("1", "3", "7"), "(no5)M7"),
+        ChordLabel(("1", "b3", "7"), "m(no5)M7"),
         # dim
-        ChordLabel.from_symbols(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
-        ChordLabel.from_symbols(("1", "b3", "b5", "b7"), "h7"),
-        ChordLabel.from_symbols(("1", "b3", "b5", "b7"), "hM7"),
+        ChordLabel(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
+        ChordLabel(("1", "b3", "b5", "b7"), "h7"),
+        ChordLabel(("1", "b3", "b5", "b7"), "hM7"),
         # aug
-        ChordLabel.from_symbols(("1", "3", "#5", "b7"), "+7"),
-        ChordLabel.from_symbols(("1", "3", "#5", "7"), "+M7"),
+        ChordLabel(("1", "3", "#5", "b7"), "+7"),
+        ChordLabel(("1", "3", "#5", "7"), "+M7"),
         # sus
-        ChordLabel.from_symbols(("1", "2", "5", "b7"), "7sus2"),
-        ChordLabel.from_symbols(("1", "4", "5", "b7"), "7sus4"),
-        ChordLabel.from_symbols(("1", "2", "5", "7"), "M7sus2"),
-        ChordLabel.from_symbols(("1", "4", "5", "7"), "M7sus4"),
+        ChordLabel(("1", "2", "5", "b7"), "7sus2"),
+        ChordLabel(("1", "4", "5", "b7"), "7sus4"),
+        ChordLabel(("1", "2", "5", "7"), "M7sus2"),
+        ChordLabel(("1", "4", "5", "7"), "M7sus4"),
     ]
 )
 
