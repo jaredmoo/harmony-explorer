@@ -114,7 +114,7 @@ class NoteIndex:
 
 
 index = NoteIndex()
-for o in range(1, 5):
+for o in range(1, 9):
     pk = 12 * (o - 1)
     # A
     index._add("A", o - 1, 1 + pk)
@@ -129,6 +129,11 @@ for o in range(1, 5):
     index._add("B#", o - 1, 4 + pk)
     index._add("C", o, 4 + pk)
     index._add("Dbb", o, 4 + pk)
+
+    # C8 is the highest piano key
+    if 4 + pk == 88:
+        break
+
     # C#
     index._add("C#", o, 5 + pk)
     index._add("Db", o, 5 + pk)
