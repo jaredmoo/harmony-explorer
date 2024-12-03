@@ -1,12 +1,17 @@
 from scale_label import scale_index
 import chord_label
 from src.relationship import relationships
+import note
 import os
 
 try:
     os.mkdir("data")
 except FileExistsError:
     pass
+
+with open("data/notes.txt", "w", encoding="utf8") as f:
+    for n in note.index.values():
+        print(n.symbol, "\t", n.piano_key, file=f)
 
 chord_label.index.dump("data/chord_labels_chromatic.txt")
 for s in scale_index.values():
