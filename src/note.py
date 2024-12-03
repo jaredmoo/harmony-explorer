@@ -19,20 +19,20 @@ def sharpen(symbol: str):
 _rel_note_names = {
     "Ab": ["Ab", "Bb", "C", "Db", "Eb", "F", "G"],
     "A": ["A", "B", "C#", "D", "E", "F#", "G#"],
-    "A#": ["A#", "B#", "C##", "D#", "E#", "F##", "G##"],
+    # "A#": ["A#", "B#", "C##", "D#", "E#", "F##", "G##"],
     "Bb": ["Bb", "C", "D", "Eb", "F", "G", "A"],
     "B": ["B", "C#", "D#", "E", "F#", "G#", "A#"],
-    "Cb": ["Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"],
+    # "Cb": ["Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"],
     "C": ["C", "D", "E", "F", "G", "A", "B"],
     "C#": ["C#", "D#", "E#", "F#", "G#", "A#", "B#"],
     "Db": ["Db", "Eb", "F", "Gb", "Ab", "Bb", "C"],
     "D": ["D", "E", "F#", "G", "A", "B", "C#"],
-    "D#": ["D#", "E#", "F##", "G#", "A#", "B#", "C##"],
+    # "D#": ["D#", "E#", "F##", "G#", "A#", "B#", "C##"],
     "Eb": ["Eb", "F", "G", "Ab", "Bb", "C", "D"],
     "E": ["E", "F#", "G#", "A", "B", "C#", "D#"],
     "F": ["F", "G", "A", "Bb", "C", "D", "E"],
     "F#": ["F#", "G#", "A#", "B", "C#", "D#", "E#"],
-    "Gb": ["Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
+    # "Gb": ["Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
     "G": ["G", "A", "B", "C", "D", "E", "F#"],
     "G#": ["G#", "A#", "B#", "C#", "D#", "E#", "F#"],
 }
@@ -40,9 +40,43 @@ _rel_note_names = {
 # Note names that we support as scale roots, for generating intervals from, etc
 base_names = _rel_note_names.keys()
 
-# All base note names, plus unusual note names (B#, Cb, E#, Fb, and double flats / double sharps)
+# All base note names, plus note names with 1 level of weirdness (B#, Cb, E#, Fb, and double flats / double sharps)
 # that we consider to be reachable, but you wouldn't use them as a scale root
-reachable_names = set([x for xx in _rel_note_names.values() for x in xx])
+reachable_names = set(
+    [
+        "Abb",
+        "Ab",
+        "A",
+        "A#",
+        "A##",
+        "Bbb",
+        "Bb",
+        "B",
+        "B#",  # B## is abomination
+        "Cb",
+        "C",
+        "C#",
+        "C##",  # Cbb is abomination
+        "Dbb",
+        "Db",
+        "D",
+        "D#",
+        "D##",
+        "Ebb",
+        "Eb",
+        "E",
+        "E#",  # E## is abomination
+        "Fb",
+        "F",
+        "F#",
+        "F##",  # F## is abomination
+        "Gbb",
+        "Gb",
+        "G",
+        "G#",
+        "G##",
+    ]
+)
 
 # Any other note names (including B##, Cbb, E##, Fbb, and triple flats / triple sharps)
 # are considered abominations are are completel not allowed

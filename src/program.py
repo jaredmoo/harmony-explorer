@@ -13,14 +13,8 @@ except FileExistsError:
 with open("data/note_intervals.txt", "w", encoding="utf8") as f:
     for n in note.roots:
         for i in interval.index.values():
-            try:
-                n2 = n.add(i)
-                print(
-                    f"{n} interval {i} = {n2}",
-                    file=f,
-                )
-            except ValueError as e:
-                print(e, file=f)
+            n2 = n.add(i)
+            print(f"{n} interval {i} = {n2}", file=f)
 
 chord_label.index.dump("data/chord_labels_chromatic.txt")
 for s in scale_label.index.values():
