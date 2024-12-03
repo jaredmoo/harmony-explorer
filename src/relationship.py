@@ -88,6 +88,7 @@ class Relationships(list):
 
 
 # todo relationships:
+# enharmonic
 # interchange
 #   major/minor to sus
 #   minor to aug
