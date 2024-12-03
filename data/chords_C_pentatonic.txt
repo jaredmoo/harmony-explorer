@@ -1,0 +1,8 @@
+Csus2 (C, D, G)
+C6sus2 (C, D, G, A)
+Csus4 (C, F, G)
+C6sus4 (C, F, G, A)
+C6sus4(add9) (C, F, G, A, D↑)
+Csus4(add9) (C, F, G, D↑)
+C5 (C, G)
+C5(add9) (C, G, D↑)

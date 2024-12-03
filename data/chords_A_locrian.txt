@@ -1,0 +1,6 @@
+Am(no5) (A, C)
+Adim (A, C, E♭)
+AhM7 (A, C, E♭, G)
+Am(no5)7 (A, C, G)
+Am(no5)b9 (A, C, G, B♭↑)
+Am(no5)(addb9) (A, C, B♭↑)

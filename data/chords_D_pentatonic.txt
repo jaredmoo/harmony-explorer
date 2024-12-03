@@ -1,0 +1,8 @@
+Dsus2 (D, E, A)
+D6sus2 (D, E, A, B)
+Dsus4 (D, G, A)
+D6sus4 (D, G, A, B)
+D6sus4(add9) (D, G, A, B, E↑)
+Dsus4(add9) (D, G, A, E↑)
+D5 (D, A)
+D5(add9) (D, A, E↑)

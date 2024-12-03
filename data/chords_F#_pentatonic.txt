@@ -1,0 +1,8 @@
+F#sus2 (F♯, G♯, C♯)
+F#6sus2 (F♯, G♯, C♯, D♯)
+F#sus4 (F♯, B, C♯)
+F#6sus4 (F♯, B, C♯, D♯)
+F#6sus4(add9) (F♯, B, C♯, D♯, G♯↑)
+F#sus4(add9) (F♯, B, C♯, G♯↑)
+F#5 (F♯, C♯)
+F#5(add9) (F♯, C♯, G♯↑)

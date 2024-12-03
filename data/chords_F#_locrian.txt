@@ -1,0 +1,6 @@
+F#m(no5) (F♯, A)
+F#dim (F♯, A, C)
+F#hM7 (F♯, A, C, E)
+F#m(no5)7 (F♯, A, E)
+F#m(no5)b9 (F♯, A, E, G↑)
+F#m(no5)(addb9) (F♯, A, G↑)

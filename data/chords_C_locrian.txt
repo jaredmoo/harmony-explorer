@@ -1,0 +1,6 @@
+Cm(no5) (C, E♭)
+Cdim (C, E♭, G♭)
+ChM7 (C, E♭, G♭, B♭)
+Cm(no5)7 (C, E♭, B♭)
+Cm(no5)b9 (C, E♭, B♭, D♭↑)
+Cm(no5)(addb9) (C, E♭, D♭↑)

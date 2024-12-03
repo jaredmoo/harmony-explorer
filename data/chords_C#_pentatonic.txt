@@ -1,0 +1,8 @@
+C#sus2 (C♯, D♯, G♯)
+C#6sus2 (C♯, D♯, G♯, A♯)
+C#sus4 (C♯, F♯, G♯)
+C#6sus4 (C♯, F♯, G♯, A♯)
+C#6sus4(add9) (C♯, F♯, G♯, A♯, D♯↑)
+C#sus4(add9) (C♯, F♯, G♯, D♯↑)
+C#5 (C♯, G♯)
+C#5(add9) (C♯, G♯, D♯↑)

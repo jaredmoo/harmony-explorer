@@ -1,0 +1,8 @@
+Bbsus2 (B♭, C, F)
+Bb6sus2 (B♭, C, F, G)
+Bbsus4 (B♭, E♭, F)
+Bb6sus4 (B♭, E♭, F, G)
+Bb6sus4(add9) (B♭, E♭, F, G, C↑)
+Bbsus4(add9) (B♭, E♭, F, C↑)
+Bb5 (B♭, F)
+Bb5(add9) (B♭, F, C↑)

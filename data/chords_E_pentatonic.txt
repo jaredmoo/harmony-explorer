@@ -1,0 +1,8 @@
+Esus2 (E, F♯, B)
+E6sus2 (E, F♯, B, C♯)
+Esus4 (E, A, B)
+E6sus4 (E, A, B, C♯)
+E6sus4(add9) (E, A, B, C♯, F♯↑)
+Esus4(add9) (E, A, B, F♯↑)
+E5 (E, B)
+E5(add9) (E, B, F♯↑)

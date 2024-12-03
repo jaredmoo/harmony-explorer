@@ -1,0 +1,8 @@
+Dbsus2 (D♭, E♭, A♭)
+Db6sus2 (D♭, E♭, A♭, B♭)
+Dbsus4 (D♭, G♭, A♭)
+Db6sus4 (D♭, G♭, A♭, B♭)
+Db6sus4(add9) (D♭, G♭, A♭, B♭, E♭↑)
+Dbsus4(add9) (D♭, G♭, A♭, E♭↑)
+Db5 (D♭, A♭)
+Db5(add9) (D♭, A♭, E♭↑)

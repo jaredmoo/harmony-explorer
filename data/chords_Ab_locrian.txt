@@ -1,0 +1,6 @@
+Abm(no5) (A♭, C♭)
+Abdim (A♭, C♭, E𝄫)
+AbhM7 (A♭, C♭, E𝄫, G♭)
+Abm(no5)7 (A♭, C♭, G♭)
+Abm(no5)b9 (A♭, C♭, G♭, B𝄫↑)
+Abm(no5)(addb9) (A♭, C♭, B𝄫↑)

@@ -1,0 +1,6 @@
+Gm(no5) (G, B♭)
+Gdim (G, B♭, D♭)
+GhM7 (G, B♭, D♭, F)
+Gm(no5)7 (G, B♭, F)
+Gm(no5)b9 (G, B♭, F, A♭↑)
+Gm(no5)(addb9) (G, B♭, A♭↑)

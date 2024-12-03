@@ -1,0 +1,6 @@
+Dbm(no5) (D♭, F♭)
+Dbdim (D♭, F♭, A𝄫)
+DbhM7 (D♭, F♭, A𝄫, C♭)
+Dbm(no5)7 (D♭, F♭, C♭)
+Dbm(no5)b9 (D♭, F♭, C♭, E𝄫↑)
+Dbm(no5)(addb9) (D♭, F♭, E𝄫↑)

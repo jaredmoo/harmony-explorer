@@ -27,7 +27,7 @@ with open_data_write("scales.txt") as f:
             print(f"{n} {s.name}: {[n.add(i) for i in s.intervals]}", file=f)
 
 
-def dump_chord_label_index(chord_label_index: chord_label.ChordLabelIndex, file: str):
+def dump_chord_labels(chord_label_index: chord_label.ChordLabelIndex, file: str):
     x = list(chord_label_index.intervals())
     x.sort()
     with open_data_write(file) as f:
@@ -36,9 +36,29 @@ def dump_chord_label_index(chord_label_index: chord_label.ChordLabelIndex, file:
             print(chord_label_index.get_intervals(i), file=f)
 
 
-dump_chord_label_index(chord_label.index, "chord_labels_chromatic.txt")
+def dump_chords(
+    chord_label_index: chord_label.ChordLabelIndex, root: note.Note, file: str
+):
+    x = list(chord_label_index.intervals())
+    x.sort()
+    with open_data_write(file) as f:
+        f.truncate()
+        for i in x:
+            print(
+                f"{n.name}{chord_label_index.get_intervals(i).symbol}",
+                tuple(map(root.add, i)),
+                file=f,
+            )
+
+
+dump_chord_labels(chord_label.index, "chord_labels_chromatic.txt")
+for n in note.roots:
+    dump_chords(chord_label.index, n, f"chords_{n.name}_chromatic.txt")
 for s in scale_label.index.values():
-    dump_chord_label_index(chord_label.index.restrict(s), f"chord_labels_{s.name}.txt")
+    chord_labels_in_scale = chord_label.index.restrict(s)
+    dump_chord_labels(chord_labels_in_scale, f"chord_labels_{s.name}.txt")
+    for n in note.roots:
+        dump_chords(chord_labels_in_scale, n, f"chords_{n.name}_{s.name}.txt")
 
 with open_data_write("relationships.txt") as f:
     f.truncate()
