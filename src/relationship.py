@@ -1,3 +1,4 @@
+from typing import Iterable
 import interval
 from collections import namedtuple
 import chord_label
@@ -56,12 +57,12 @@ class Relationships(list):
         self,
         type: RelationshipType,
         c: chord_label.ChordLabel,
-        ii: list[str] | list[interval.Interval],
+        ii: Iterable[str | interval.Interval],
     ):
-        ii = map(interval.index.get, ii)
+        ii2 = map(interval.index.get, ii)
 
         intervals2 = list(c.intervals)
-        for i in ii:
+        for i in ii2:
             if i not in c.intervals:
                 return
             intervals2.remove(i)

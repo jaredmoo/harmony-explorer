@@ -6,9 +6,7 @@ import io
 
 
 class ChordLabel:
-    def __init__(
-        self, intervals: Iterable[str] | Iterable[interval.Interval], symbol: str
-    ):
+    def __init__(self, intervals: Iterable[str | interval.Interval], symbol: str):
         self.intervals = tuple(map(interval.index.get, intervals))
         self.symbol = symbol
 
@@ -193,8 +191,8 @@ for c in list(_values):
 ### Index
 class ChordLabelIndex:
     def __init__(self, values: Iterable[ChordLabel]):
-        self._by_symbol = dict()
-        self._by_intervals = dict()
+        self._by_symbol: dict[str, ChordLabel] = dict()
+        self._by_intervals: dict[Iterable[interval.Interval], ChordLabel] = dict()
 
         for v in values:
             if v.symbol in self._by_symbol.keys():
@@ -205,22 +203,20 @@ class ChordLabelIndex:
     def __repr__(self):
         return self.values().__repr__()
 
+    def symbols(self):
+        return self._by_symbol.keys()
+
+    def intervals(self):
+        return self._by_intervals.keys()
+
     def values(self):
         return self._by_symbol.values()
 
     def get_symbol(self, s: str):
         return self._by_symbol.get(s, None)
 
-    def get_intervals(self, i: Iterable[str]):
+    def get_intervals(self, i: tuple[interval.Interval, ...]):
         return self._by_intervals.get(i, None)
-
-    def dump(self, file: str):
-        x = list(self._by_intervals.keys())
-        x.sort()
-        with io.open(file, "w", encoding="utf8") as f:
-            f.truncate()
-            for i in x:
-                print(self._by_intervals[i], file=f)
 
     def restrict(self, scale: ScaleLabel):
         return ChordLabelIndex([c for c in self.values() if c.is_in(scale)])

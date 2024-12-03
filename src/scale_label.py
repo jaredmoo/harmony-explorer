@@ -3,7 +3,7 @@ from typing import Iterable
 
 
 class ScaleLabel:
-    def __init__(self, name, intervals: Iterable[str] | Iterable[interval.Interval]):
+    def __init__(self, name, intervals: Iterable[str | interval.Interval]):
         self.name = name
         self.intervals = tuple(map(interval.index.get, intervals))
 

@@ -56,7 +56,7 @@ _values: list[Interval] = [
 ### Index
 class IntervalIndex:
     def __init__(self, values: Iterable[Interval]):
-        self._by_symbol = dict()
+        self._by_symbol: dict[str, Interval] = dict()
         for v in values:
             if v.symbol in self._by_symbol.keys():
                 raise KeyError(v.symbol)
