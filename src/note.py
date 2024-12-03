@@ -54,12 +54,12 @@ class Note:
     def add(self, i: interval.Interval):
         # Don't go above pianko keys
         if self.piano_key + i.semitones > 88:
-            raise IndexError(str(self) + " + " + i + " would go above piano key range")
+            raise IndexError(f"{str(self)} interval {i} would go above piano key range")
 
         # Don't support generating intervals from double flats or double sharps etc
         if self.name not in _relative_note_names.keys():
             raise IndexError(
-                "Generating intervals from " + str(self.name) + " is not supported"
+                f"Generating intervals from {str(self.name)} is not supported"
             )
 
         x_relative_major_scale_degrees = i.major_scale_degree
@@ -84,9 +84,12 @@ class Note:
         elif i.rel_semitones == 1:
             x_name = sharpen(x_name)
 
-        return Note(
-            x_name, self.octave + x_relative_octave, self.piano_key + i.semitones
-        )
+        try:
+            return index.get_name_and_octave(x_name, self.octave + x_relative_octave)
+        except KeyError:
+            raise IndexError(
+                f"{str(self)} interval {i} results in disallowed note name {x_name}"
+            )
 
 
 class NoteIndex:
@@ -94,10 +97,10 @@ class NoteIndex:
         self._by_symbol = dict()
 
     def get_name_and_octave(self, name: str, octave: int):
-        return self.get_id(Note.make_symbol(name, octave))
+        return self._by_symbol[Note.make_symbol(name, octave)]
 
     def get_symbol(self, symbol):
-        return self._by_symbol(symbol)
+        return self._by_symbol[symbol]
 
     def get_name_octave(self, name: str, octave: int):
         return self._by_symbol(Note.id(name, octave))
@@ -108,9 +111,6 @@ class NoteIndex:
 
     def values(self):
         return self._by_symbol.values()
-
-    def fully_supported_values(self):
-        return [v for v in self.values() if v.is_fully_supported]
 
 
 index = NoteIndex()
