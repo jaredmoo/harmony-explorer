@@ -128,4 +128,4 @@ class Note:
         return Note(x_name, x_rel_octave)
 
 
-roots = set([Note(n, 0) for n in base_names])
+roots = [Note(n, 0) for n in base_names]
