@@ -10,22 +10,17 @@ try:
 except FileExistsError:
     pass
 
-
-with open("data/notes.txt", "w", encoding="utf8") as f:
-    for n in note.index.values():
-        print(n.symbol, "\t", n.piano_key, file=f)
-
 with open("data/note_intervals.txt", "w", encoding="utf8") as f:
-    for n in note.index.values():
+    for n in note.roots:
         for i in interval.index.values():
             try:
                 n2 = n.add(i)
                 print(
-                    f"{n} (piano key {n.piano_key}) interval {i} = {n2} (piano key {n2.piano_key})",
+                    f"{n} interval {i} = {n2}",
                     file=f,
                 )
-            except IndexError:
-                pass
+            except ValueError as e:
+                print(e, file=f)
 
 chord_label.index.dump("data/chord_labels_chromatic.txt")
 for s in scale_label.index.values():
