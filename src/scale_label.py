@@ -19,13 +19,13 @@ class ScaleLabelIndex:
         for s in scales:
             self.add(s)
 
-    def names(self):
+    def names(self) -> str:
         return self._by_name.keys()
 
-    def values(self):
+    def values(self) -> Iterable[ScaleLabel]:
         return self._by_name.values()
 
-    def get_name(self, name: str):
+    def get_name(self, name: str) -> ScaleLabel:
         return self._by_name[name]
 
 

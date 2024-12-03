@@ -90,9 +90,9 @@ class Note:
 
     def __repr__(self):
         return prettify(self.name) + (
-            f" (oct.+{self.rel_octave})"
+            "↑" * self.rel_octave
             if self.rel_octave > 0
-            else f" (oct.{self.rel_octave})" if self.rel_octave < 0 else ""
+            else "↓" * (-1 * self.rel_octave) if self.rel_octave < 0 else ""
         )
 
     def add(self, i: interval.Interval):

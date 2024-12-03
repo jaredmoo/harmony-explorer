@@ -21,6 +21,11 @@ with open_data_write("note_intervals.txt") as f:
             n2 = n.add(i)
             print(f"{n} interval {i} = {n2}", file=f)
 
+with open_data_write("scales.txt") as f:
+    for n in note.roots:
+        for s in scale_label.index.values():
+            print(f"{n} {s.name}: {[n.add(i) for i in s.intervals]}", file=f)
+
 
 def dump_chord_label_index(chord_label_index: chord_label.ChordLabelIndex, file: str):
     x = list(chord_label_index.intervals())
