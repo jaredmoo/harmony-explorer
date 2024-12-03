@@ -1,11 +1,16 @@
+from typing import Iterable
 from prettify import prettify
 
 
 class Interval:
-    def __init__(self, semitones: int, symbol: str):
-        self.semitones = semitones
-        self.symbol = symbol
-        self.pretty = prettify(symbol)
+    def __init__(self, major_scale_degree: int, rel_semitones: int):
+        self.major_scale_degree = major_scale_degree
+        self.rel_semitones = rel_semitones
+        self.semitones = (major_scale_degree - 1) * 2 + rel_semitones
+        self.symbol = (
+            "b" if rel_semitones == -1 else "#" if rel_semitones == 1 else ""
+        ) + str(major_scale_degree)
+        self.pretty = prettify(self.symbol)
 
     def __repr__(self):
         return self.pretty
@@ -18,44 +23,58 @@ class Interval:
             return self.symbol < other.symbol
 
 
-_intervals: list = [
-    Interval(0, "1"),
-    Interval(1, "b2"),
-    Interval(2, "2"),
-    Interval(3, "b3"),
-    Interval(4, "3"),
-    Interval(5, "4"),
-    Interval(6, "b5"),
-    Interval(7, "5"),
-    Interval(8, "#5"),
-    Interval(8, "b6"),
-    Interval(9, "6"),
-    Interval(10, "b7"),
-    Interval(11, "7"),
-    Interval(12, "8"),
-    Interval(13, "b9"),
-    Interval(14, "9"),
-    Interval(15, "#9"),
-    Interval(15, "b10"),
-    Interval(16, "10"),
-    Interval(16, "b11"),
-    Interval(17, "11"),
-    Interval(18, "#11"),
-    Interval(19, "b12"),
-    Interval(19, "12"),
-    Interval(20, "b13"),
-    Interval(21, "13"),
+_values: list[Interval] = [
+    Interval(1, 0),
+    Interval(2, -1),
+    Interval(2, 0),
+    Interval(3, -1),
+    Interval(3, 0),
+    Interval(4, 0),
+    Interval(5, -1),
+    Interval(5, 0),
+    Interval(5, 1),
+    Interval(6, -1),
+    Interval(6, 0),
+    Interval(7, -1),
+    Interval(7, 0),
+    Interval(8, 0),
+    Interval(9, -1),
+    Interval(9, 0),
+    Interval(9, 1),
+    Interval(10, -1),
+    Interval(10, 0),
+    Interval(11, -1),
+    Interval(11, 0),
+    Interval(11, 1),
+    Interval(12, -1),
+    Interval(12, 0),
+    Interval(13, -1),
+    Interval(13, 0),
 ]
 
-_interval_index = dict()
-for i in _intervals:
-    _interval_index[i.symbol] = i
+
+### Index
+class IntervalIndex:
+    def __init__(self, values: Iterable[Interval]):
+        self._by_symbol = dict()
+        for v in values:
+            if v.symbol in self._by_symbol.keys():
+                raise KeyError(v.symbol)
+            self._by_symbol[v.symbol] = v
+
+    def __repr__(self):
+        return self.values().__repr__()
+
+    def values(self):
+        return self._by_symbol.values()
+
+    def get(self, x) -> Interval:
+        if isinstance(x, str):
+            return self._by_symbol[x]
+        elif isinstance(x, Interval):
+            return x
+        else:
+            raise TypeError(type(x))
 
 
-def interval(x) -> Interval:
-    if isinstance(x, str):
-        return _interval_index[x]
-    elif isinstance(x, Interval):
-        return x
-    else:
-        raise TypeError(type(x))
+index = IntervalIndex(_values)

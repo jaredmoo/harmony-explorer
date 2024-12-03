@@ -1,11 +1,11 @@
-from interval import interval, Interval
+import interval
 from typing import Iterable
 
 
 class ScaleLabel:
-    def __init__(self, name, intervals: Iterable[str] | Iterable[Interval]):
+    def __init__(self, name, intervals: Iterable[str] | Iterable[interval.Interval]):
         self.name = name
-        self.intervals = tuple(map(interval, intervals))
+        self.intervals = tuple(map(interval.index.get, intervals))
 
 
 class ScaleLabelIndex:

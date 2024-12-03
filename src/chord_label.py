@@ -1,4 +1,4 @@
-from interval import interval, Interval
+import interval
 from prettify import prettify
 from scale_label import ScaleLabel
 from typing import Iterable
@@ -6,36 +6,44 @@ import io
 
 
 class ChordLabel:
-    def __init__(self, intervals: Iterable[str] | Iterable[Interval], symbol: str):
-        self.intervals = tuple(map(interval, intervals))
+    def __init__(
+        self, intervals: Iterable[str] | Iterable[interval.Interval], symbol: str
+    ):
+        self.intervals = tuple(map(interval.index.get, intervals))
         self.symbol = symbol
 
     def __repr__(self):
         return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
 
-    def extend_with(self, extension_interval: str | Interval):
-        extension_interval = interval(extension_interval)
+    def extend_with(self, extension_interval: str | interval.Interval):
+        extension_interval = interval.index.get(extension_interval)
 
         new_intervals = self.intervals + (extension_interval,)
 
         new_chord_symbol = self.symbol + "(add" + extension_interval.symbol + ")"
-        if interval("b7") in self.intervals or interval("7") in self.intervals:
+        if (
+            interval.index.get("b7") in self.intervals
+            or interval.index.get("7") in self.intervals
+        ):
             if "9" in extension_interval.symbol:
                 # We are extending a (M)7 to a (M)(b/#)9 chord
                 new_chord_symbol = self.symbol.replace("7", extension_interval.symbol)
-            elif interval("9") in self.intervals and "11" in extension_interval.symbol:
+            elif (
+                interval.index.get("9") in self.intervals
+                and "11" in extension_interval.symbol
+            ):
                 # We are extending a 9 chord to a (#)11 chord
                 new_chord_symbol = self.symbol.replace("9", extension_interval.symbol)
             elif "11" == extension_interval.symbol:
                 # We are extending a b/#9 chord with an 11
-                if interval("b9") in self.intervals:
+                if interval.index.get("b9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("b9", "11(b9)")
-                elif interval("#9") in self.intervals:
+                elif interval.index.get("#9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("#9", "11(#9)")
             elif "#11" == extension_interval.symbol and (
-                interval("b9") in self.intervals
-                or interval("9") in self.intervals
-                or interval("#9") in self.intervals
+                interval.index.get("b9") in self.intervals
+                or interval.index.get("9") in self.intervals
+                or interval.index.get("#9") in self.intervals
             ):
                 # We are extending a (b/#)9 chord with a #11
                 new_chord_symbol = self.symbol + extension_interval.symbol
@@ -49,98 +57,53 @@ class ChordLabel:
         return True
 
 
-class ChordLabelIndex:
-    def __init__(self):
-        self._by_symbol = dict()
-        self._by_intervals = dict()
-
-    def __repr__(self):
-        return self.values().__repr__()
-
-    def add(self, chord: ChordLabel):
-        if chord.symbol in self._by_symbol.keys():
-            raise KeyError(chord.symbol)
-        self._by_symbol[chord.symbol] = chord
-        self._by_intervals[chord.intervals] = chord
-
-    def add_many(self, chords: Iterable[ChordLabel]):
-        for c in chords:
-            self.add(c)
-
-    def values(self):
-        return self._by_symbol.values()
-
-    def get_symbol(self, s: str):
-        return self._by_symbol.get(s, None)
-
-    def get_intervals(self, i: Iterable[str]):
-        return self._by_intervals.get(i, None)
-
-    def dump(self, file: str):
-        x = list(self._by_intervals.keys())
-        x.sort()
-        with io.open(file, "w", encoding="utf8") as f:
-            f.truncate()
-            for i in x:
-                print(self._by_intervals[i], file=f)
-
-    def restrict(self, scale: ScaleLabel):
-        chords = [c for c in self.values() if c.is_in(scale)]
-        restricted = ChordLabelIndex()
-        restricted.add_many(chords)
-        return restricted
-
-
-chord_label_index: ChordLabelIndex = ChordLabelIndex()
-chord_label_index.add_many(
-    [
-        ChordLabel(("1", "3", "5"), ""),
-        ChordLabel(("1", "b3", "5"), "m"),
-        # power
-        ChordLabel(("1", "5"), "5"),
-        # no5
-        ChordLabel(("1", "3"), "(no5)"),
-        ChordLabel(("1", "b3"), "m(no5)"),
-        # dim
-        ChordLabel(("1", "b3", "b5"), "dim"),
-        # aug
-        ChordLabel(("1", "3", "#5"), "+"),
-        # sus
-        ChordLabel(("1", "2", "5"), "sus2"),
-        ChordLabel(("1", "4", "5"), "sus4"),
-        ### 6
-        ChordLabel(("1", "3", "5", "6"), "6"),
-        ChordLabel(("1", "b3", "5", "6"), "m6"),
-        # sus
-        ChordLabel(("1", "2", "5", "6"), "6sus2"),
-        ChordLabel(("1", "4", "5", "6"), "6sus4"),
-        ### 7 chords
-        ChordLabel(("1", "3", "5", "b7"), "7"),
-        ChordLabel(("1", "b3", "5", "b7"), "m7"),
-        ChordLabel(("1", "3", "5", "7"), "M7"),
-        ChordLabel(("1", "b3", "5", "7"), "mM7"),
-        # power
-        ChordLabel(("1", "5", "b7"), "57"),
-        ChordLabel(("1", "5", "7"), "5M7"),
-        # no5
-        ChordLabel(("1", "3", "b7"), "(no5)7"),
-        ChordLabel(("1", "b3", "b7"), "m(no5)7"),
-        ChordLabel(("1", "3", "7"), "(no5)M7"),
-        ChordLabel(("1", "b3", "7"), "m(no5)M7"),
-        # dim
-        ChordLabel(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
-        ChordLabel(("1", "b3", "b5", "b7"), "h7"),
-        ChordLabel(("1", "b3", "b5", "b7"), "hM7"),
-        # aug
-        ChordLabel(("1", "3", "#5", "b7"), "+7"),
-        ChordLabel(("1", "3", "#5", "7"), "+M7"),
-        # sus
-        ChordLabel(("1", "2", "5", "b7"), "7sus2"),
-        ChordLabel(("1", "4", "5", "b7"), "7sus4"),
-        ChordLabel(("1", "2", "5", "7"), "M7sus2"),
-        ChordLabel(("1", "4", "5", "7"), "M7sus4"),
-    ]
-)
+_values: list[ChordLabel] = [
+    ChordLabel(("1", "3", "5"), ""),
+    ChordLabel(("1", "b3", "5"), "m"),
+    # power
+    ChordLabel(("1", "5"), "5"),
+    # no5
+    ChordLabel(("1", "3"), "(no5)"),
+    ChordLabel(("1", "b3"), "m(no5)"),
+    # dim
+    ChordLabel(("1", "b3", "b5"), "dim"),
+    # aug
+    ChordLabel(("1", "3", "#5"), "+"),
+    # sus
+    ChordLabel(("1", "2", "5"), "sus2"),
+    ChordLabel(("1", "4", "5"), "sus4"),
+    ### 6
+    ChordLabel(("1", "3", "5", "6"), "6"),
+    ChordLabel(("1", "b3", "5", "6"), "m6"),
+    # sus
+    ChordLabel(("1", "2", "5", "6"), "6sus2"),
+    ChordLabel(("1", "4", "5", "6"), "6sus4"),
+    ### 7 chords
+    ChordLabel(("1", "3", "5", "b7"), "7"),
+    ChordLabel(("1", "b3", "5", "b7"), "m7"),
+    ChordLabel(("1", "3", "5", "7"), "M7"),
+    ChordLabel(("1", "b3", "5", "7"), "mM7"),
+    # power
+    ChordLabel(("1", "5", "b7"), "57"),
+    ChordLabel(("1", "5", "7"), "5M7"),
+    # no5
+    ChordLabel(("1", "3", "b7"), "(no5)7"),
+    ChordLabel(("1", "b3", "b7"), "m(no5)7"),
+    ChordLabel(("1", "3", "7"), "(no5)M7"),
+    ChordLabel(("1", "b3", "7"), "m(no5)M7"),
+    # dim
+    ChordLabel(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
+    ChordLabel(("1", "b3", "b5", "b7"), "h7"),
+    ChordLabel(("1", "b3", "b5", "b7"), "hM7"),
+    # aug
+    ChordLabel(("1", "3", "#5", "b7"), "+7"),
+    ChordLabel(("1", "3", "#5", "7"), "+M7"),
+    # sus
+    ChordLabel(("1", "2", "5", "b7"), "7sus2"),
+    ChordLabel(("1", "4", "5", "b7"), "7sus4"),
+    ChordLabel(("1", "2", "5", "7"), "M7sus2"),
+    ChordLabel(("1", "4", "5", "7"), "M7sus4"),
+]
 
 ### Extensions
 #
@@ -188,40 +151,79 @@ chord_label_index.add_many(
 ### 9 chords
 # These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
-for c in list(chord_label_index.values()):
+for c in list(_values):
     # 9 is octave away from 2, so 9 & sus2 are redundant, and #9 & sus2 are a b9 away from each other.
     # b9 & 2 are a M7 away from each other, but it's too dissonant to include for now until we have
     # better relationships implemented.
-    if interval("2") in c.intervals:
+    if interval.index.get("2") in c.intervals:
         continue
 
     # dim chords are already dissonant enough to not extend them.
-    if interval("b5") in c.intervals:
+    if interval.index.get("b5") in c.intervals:
         continue
 
-    chord_label_index.add_many([c.extend_with("b9")])
-    chord_label_index.add_many([c.extend_with("9")])
-    chord_label_index.add_many([c.extend_with("#9")])
+    _values.append(c.extend_with("b9"))
+    _values.append(c.extend_with("9"))
+    _values.append(c.extend_with("#9"))
 
 
 ### 11 chords
 # These are technically not the correct chord symbols, since '7add9add11' should just be written as '11'.
 # Just trying to keep it simple at first.
-for c in list(chord_label_index.values()):
+for c in list(_values):
     # See note above about not generating rare chords (i.e. with internal b9's).
-    if interval("5") in c.intervals:
+    if interval.index.get("5") in c.intervals:
         continue
 
     # 11 is octave away from 4, so 11 & sus4 are redundant, and #11 & sus4 are b9 away from each other.
-    if interval("4") in c.intervals:
+    if interval.index.get("4") in c.intervals:
         continue
 
     # dim chords are already dissonant enough to not extend them.
-    if interval("b5") in c.intervals:
+    if interval.index.get("b5") in c.intervals:
         continue
 
-    if interval("3") not in c.intervals:
-        chord_label_index.add_many([c.extend_with("11")])
+    if interval.index.get("3") not in c.intervals:
+        _values.append(c.extend_with("11"))
 
-    if interval("b3") not in c.intervals:
-        chord_label_index.add_many([c.extend_with("#11")])
+    if interval.index.get("b3") not in c.intervals:
+        _values.append(c.extend_with("#11"))
+
+
+### Index
+class ChordLabelIndex:
+    def __init__(self, values: Iterable[ChordLabel]):
+        self._by_symbol = dict()
+        self._by_intervals = dict()
+
+        for v in values:
+            if v.symbol in self._by_symbol.keys():
+                raise KeyError(v.symbol)
+            self._by_symbol[v.symbol] = v
+            self._by_intervals[v.intervals] = v
+
+    def __repr__(self):
+        return self.values().__repr__()
+
+    def values(self):
+        return self._by_symbol.values()
+
+    def get_symbol(self, s: str):
+        return self._by_symbol.get(s, None)
+
+    def get_intervals(self, i: Iterable[str]):
+        return self._by_intervals.get(i, None)
+
+    def dump(self, file: str):
+        x = list(self._by_intervals.keys())
+        x.sort()
+        with io.open(file, "w", encoding="utf8") as f:
+            f.truncate()
+            for i in x:
+                print(self._by_intervals[i], file=f)
+
+    def restrict(self, scale: ScaleLabel):
+        return ChordLabelIndex([c for c in self.values() if c.is_in(scale)])
+
+
+index = ChordLabelIndex(_values)
