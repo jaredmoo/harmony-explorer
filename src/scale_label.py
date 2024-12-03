@@ -29,8 +29,8 @@ class ScaleLabelIndex:
         return self._by_name[name]
 
 
-scale_index = ScaleLabelIndex()
-scale_index.add_many(
+index = ScaleLabelIndex()
+index.add_many(
     [
         ScaleLabel(
             "lydian", ["1", "2", "3", "b5", "5", "6", "7", "8", "9", "10", "#11"]
