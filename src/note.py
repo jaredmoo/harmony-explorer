@@ -17,31 +17,51 @@ def sharpen(symbol: str):
 
 
 _relative_note_names = {
+    "Ab": ["Ab", "Bb", "C", "Db", "Eb", "F", "G"],
     "A": ["A", "B", "C#", "D", "E", "F#", "G#"],
+    "A#": ["A#", "B#", "C##", "D#", "E#", "F##", "G##"],
+    "Bb": ["Bb", "C", "D", "Eb", "F", "G", "A"],
     "B": ["B", "C#", "D#", "E", "F#", "G#", "A#"],
     "C": ["C", "D", "E", "F", "G", "A", "B"],
+    "C#": ["C#", "D#", "E#", "F#", "G#", "A#", "B#"],
+    "Db": ["Db", "Eb", "F", "Gb", "Ab", "Bb", "C"],
     "D": ["D", "E", "F#", "G", "A", "B", "C#"],
+    "D#": ["D#", "E#", "F##", "G#", "A#", "B#", "C##"],
+    "Eb": ["Eb", "F", "G", "Ab", "Bb", "C", "D"],
     "E": ["E", "F#", "G#", "A", "B", "C#", "D#"],
     "F": ["F", "G", "A", "Bb", "C", "D", "E"],
+    "F#": ["F#", "G#", "A#", "B", "C#", "D#", "E#"],
+    "Gb": ["Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
     "G": ["G", "A", "B", "C", "D", "E", "F#"],
+    "G#": ["G#", "A#", "B#", "D#", "E#", "F#"],
 }
 
 
 class Note:
     @classmethod
-    def symbol(cls, name: str, octave: int):
+    def make_symbol(cls, name: str, octave: int):
         return name + str(octave)
 
     def __init__(self, name: str, octave: int, piano_key: int):
         self.name = name
         self.octave = octave
-        self.symbol = Note.symbol(name, octave)
+        self.symbol = Note.make_symbol(name, octave)
         self.piano_key = piano_key
 
     def __repr__(self):
-        return prettify(self.id)
+        return prettify(self.symbol)
 
     def add(self, i: interval.Interval):
+        # Don't go above pianko keys
+        if self.piano_key + i.semitones > 88:
+            raise IndexError(str(self) + " + " + i + " would go above piano key range")
+
+        # Don't support generating intervals from double flats or double sharps etc
+        if self.name not in _relative_note_names.keys():
+            raise IndexError(
+                "Generating intervals from " + str(self.name) + " is not supported"
+            )
+
         x_relative_major_scale_degrees = i.major_scale_degree
         x_relative_octave = 0
 
@@ -62,7 +82,7 @@ class Note:
         if i.rel_semitones == -1:
             x_name = flatten(x_name)
         elif i.rel_semitones == 1:
-            x_name = sharpen(x.name)
+            x_name = sharpen(x_name)
 
         return Note(
             x_name, self.octave + x_relative_octave, self.piano_key + i.semitones
@@ -74,7 +94,7 @@ class NoteIndex:
         self._by_symbol = dict()
 
     def get_name_and_octave(self, name: str, octave: int):
-        return self.get_id(Note.symbol(name, octave))
+        return self.get_id(Note.make_symbol(name, octave))
 
     def get_symbol(self, symbol):
         return self._by_symbol(symbol)
@@ -89,9 +109,12 @@ class NoteIndex:
     def values(self):
         return self._by_symbol.values()
 
+    def fully_supported_values(self):
+        return [v for v in self.values() if v.is_fully_supported]
+
 
 index = NoteIndex()
-for o in range(1, 6):
+for o in range(1, 5):
     pk = 12 * (o - 1)
     # A
     index._add("A", o - 1, 1 + pk)
