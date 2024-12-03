@@ -38,45 +38,43 @@ _rel_note_names = {
 }
 
 # Note names that we support as scale roots, for generating intervals from, etc
-base_names = _rel_note_names.keys()
+base_names = sorted(_rel_note_names.keys())
 
 # All base note names, plus note names with 1 level of weirdness (B#, Cb, E#, Fb, and double flats / double sharps)
 # that we consider to be reachable, but you wouldn't use them as a scale root
-reachable_names = set(
-    [
-        "Abb",
-        "Ab",
-        "A",
-        "A#",
-        "A##",
-        "Bbb",
-        "Bb",
-        "B",
-        "B#",  # B## is abomination
-        "Cb",
-        "C",
-        "C#",
-        "C##",  # Cbb is abomination
-        "Dbb",
-        "Db",
-        "D",
-        "D#",
-        "D##",
-        "Ebb",
-        "Eb",
-        "E",
-        "E#",  # E## is abomination
-        "Fb",
-        "F",
-        "F#",
-        "F##",  # F## is abomination
-        "Gbb",
-        "Gb",
-        "G",
-        "G#",
-        "G##",
-    ]
-)
+reachable_names = [
+    "Abb",
+    "Ab",
+    "A",
+    "A#",
+    "A##",
+    "Bbb",
+    "Bb",
+    "B",
+    "B#",  # B## is abomination
+    "Cb",
+    "C",
+    "C#",
+    "C##",  # Cbb is abomination
+    "Dbb",
+    "Db",
+    "D",
+    "D#",
+    "D##",
+    "Ebb",
+    "Eb",
+    "E",
+    "E#",  # E## is abomination
+    "Fb",
+    "F",
+    "F#",
+    "F##",  # F## is abomination
+    "Gbb",
+    "Gb",
+    "G",
+    "G#",
+    "G##",
+]
 
 # Any other note names (including B##, Cbb, E##, Fbb, and triple flats / triple sharps)
 # are considered abominations are are completel not allowed
