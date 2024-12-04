@@ -1,6 +1,7 @@
 import scale_label
 import interval
 import chord_label
+from chord import Chord
 import note
 from relationship import relationships
 import os
@@ -39,16 +40,13 @@ def dump_chord_labels(chord_label_index: chord_label.ChordLabelIndex, file: str)
 def dump_chords(
     chord_label_index: chord_label.ChordLabelIndex, root: note.Note, file: str
 ):
-    x = list(chord_label_index.intervals())
-    x.sort()
+    chord_labels = list(chord_label_index.values())
+    chord_labels.sort()
     with open_data_write(file) as f:
         f.truncate()
-        for i in x:
-            print(
-                f"{n.name}{chord_label_index.get_intervals(i).symbol}",
-                tuple(map(root.add, i)),
-                file=f,
-            )
+        for cl in chord_labels:
+            chord = Chord(root, cl)
+            print(chord, file=f)
 
 
 dump_chord_labels(chord_label.index, "chord_labels_chromatic.txt")

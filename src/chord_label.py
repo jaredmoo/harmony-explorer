@@ -13,6 +13,9 @@ class ChordLabel:
     def __repr__(self):
         return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
 
+    def __lt__(self, other):
+        return self.intervals < other.intervals
+
     def extend_with(self, extension_interval: str | interval.Interval):
         extension_interval = interval.index.get(extension_interval)
 
