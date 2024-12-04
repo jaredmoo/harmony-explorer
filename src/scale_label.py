@@ -25,7 +25,7 @@ class ScaleLabelIndex:
     def values(self) -> Iterable[ScaleLabel]:
         return self._by_name.values()
 
-    def get_name(self, name: str) -> ScaleLabel:
+    def by_name(self, name: str) -> ScaleLabel:
         return self._by_name[name]
 
 

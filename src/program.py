@@ -38,7 +38,7 @@ def dump_chord_labels(cli: ChordLabelIndex, file: str):
     with open_data_write(file) as f:
         f.truncate()
         for i in x:
-            print(cli.get_intervals(i), file=f)
+            print(cli.by_intervals(i), file=f)
 
 
 def dump_chords(chord_label_index: ChordLabelIndex, root: Note, file: str):

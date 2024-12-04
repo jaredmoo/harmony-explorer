@@ -214,10 +214,10 @@ class ChordLabelIndex:
     def values(self):
         return self._by_name.values()
 
-    def get_name(self, s: str):
+    def by_name(self, s: str):
         return self._by_name.get(s, None)
 
-    def get_intervals(self, i: tuple[Interval, ...]):
+    def by_intervals(self, i: tuple[Interval, ...]):
         return self._by_intervals.get(i, None)
 
     def restrict(self, scale: ScaleLabel):

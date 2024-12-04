@@ -67,7 +67,7 @@ class Relationships(list):
                 return
             intervals2.remove(i)
 
-        c2 = chord_label_index.get_intervals(tuple(intervals2))
+        c2 = chord_label_index.by_intervals(tuple(intervals2))
         if c2 is not None:
             self.add(type, c, c2)
 
@@ -82,7 +82,7 @@ class Relationships(list):
         i2 = interval_index.get(i2)
         if i1 in c.intervals:
             intervals2 = _tuple_replace(c.intervals, i1, i2)
-            c2 = chord_label_index.get_intervals(intervals2)
+            c2 = chord_label_index.by_intervals(intervals2)
             if c2 is not None:
                 self.add(type, c, c2)
 
