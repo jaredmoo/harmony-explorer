@@ -5,12 +5,12 @@ from typing import Iterable
 
 
 class ChordLabel:
-    def __init__(self, intervals: Iterable[str | Interval], symbol: str):
+    def __init__(self, intervals: Iterable[str | Interval], name: str):
         self.intervals = tuple(map(interval_index.get, intervals))
-        self.symbol = symbol
+        self.name = name
 
     def __repr__(self):
-        return prettify(self.symbol) + " (" + " ".join(map(str, self.intervals)) + ")"
+        return prettify(self.name) + " (" + " ".join(map(str, self.intervals)) + ")"
 
     def __lt__(self, other):
         return self.intervals < other.intervals
@@ -20,35 +20,35 @@ class ChordLabel:
 
         new_intervals = self.intervals + (extension_interval,)
 
-        new_chord_symbol = self.symbol + "(add" + extension_interval.symbol + ")"
+        new_chord_name = self.name + "(add" + extension_interval.name + ")"
         if (
             interval_index.get("b7") in self.intervals
             or interval_index.get("7") in self.intervals
         ):
-            if "9" in extension_interval.symbol:
+            if "9" in extension_interval.name:
                 # We are extending a (M)7 to a (M)(b/#)9 chord
-                new_chord_symbol = self.symbol.replace("7", extension_interval.symbol)
+                new_chord_name = self.name.replace("7", extension_interval.name)
             elif (
                 interval_index.get("9") in self.intervals
-                and "11" in extension_interval.symbol
+                and "11" in extension_interval.name
             ):
                 # We are extending a 9 chord to a (#)11 chord
-                new_chord_symbol = self.symbol.replace("9", extension_interval.symbol)
-            elif "11" == extension_interval.symbol:
+                new_chord_name = self.name.replace("9", extension_interval.name)
+            elif "11" == extension_interval.name:
                 # We are extending a b/#9 chord with an 11
                 if interval_index.get("b9") in self.intervals:
-                    new_chord_symbol = self.symbol.replace("b9", "11(b9)")
+                    new_chord_name = self.name.replace("b9", "11(b9)")
                 elif interval_index.get("#9") in self.intervals:
-                    new_chord_symbol = self.symbol.replace("#9", "11(#9)")
-            elif "#11" == extension_interval.symbol and (
+                    new_chord_name = self.name.replace("#9", "11(#9)")
+            elif "#11" == extension_interval.name and (
                 interval_index.get("b9") in self.intervals
                 or interval_index.get("9") in self.intervals
                 or interval_index.get("#9") in self.intervals
             ):
                 # We are extending a (b/#)9 chord with a #11
-                new_chord_symbol = self.symbol + extension_interval.symbol
+                new_chord_name = self.name + extension_interval.name
 
-        return ChordLabel(new_intervals, new_chord_symbol)
+        return ChordLabel(new_intervals, new_chord_name)
 
     def is_in(self, scale: ScaleLabel):
         for i in self.intervals:
@@ -149,7 +149,7 @@ _values: list[ChordLabel] = [
 # Omit 7th and 11th => equivalent to 6/9
 
 ### 9 chords
-# These are technically not the correct chord symbols, since '7add9' should just be written as '9'.
+# These are technically not the correct chord names, since '7add9' should just be written as '9'.
 # Just trying to keep it simple at first.
 for c in list(_values):
     # 9 is octave away from 2, so 9 & sus2 are redundant, and #9 & sus2 are a b9 away from each other.
@@ -168,7 +168,7 @@ for c in list(_values):
 
 
 ### 11 chords
-# These are technically not the correct chord symbols, since '7add9add11' should just be written as '11'.
+# These are technically not the correct chord names, since '7add9add11' should just be written as '11'.
 # Just trying to keep it simple at first.
 for c in list(_values):
     # See note above about not generating rare chords (i.e. with internal b9's).
@@ -193,29 +193,29 @@ for c in list(_values):
 ### Index
 class ChordLabelIndex:
     def __init__(self, values: Iterable[ChordLabel]):
-        self._by_symbol: dict[str, ChordLabel] = dict()
+        self._by_name: dict[str, ChordLabel] = dict()
         self._by_intervals: dict[Iterable[Interval], ChordLabel] = dict()
 
         for v in values:
-            if v.symbol in self._by_symbol.keys():
-                raise KeyError(v.symbol)
-            self._by_symbol[v.symbol] = v
+            if v.name in self._by_name.keys():
+                raise KeyError(v.name)
+            self._by_name[v.name] = v
             self._by_intervals[v.intervals] = v
 
     def __repr__(self):
         return self.values().__repr__()
 
-    def symbols(self):
-        return self._by_symbol.keys()
+    def names(self):
+        return self._by_name.keys()
 
     def intervals(self):
         return self._by_intervals.keys()
 
     def values(self):
-        return self._by_symbol.values()
+        return self._by_name.values()
 
-    def get_symbol(self, s: str):
-        return self._by_symbol.get(s, None)
+    def get_name(self, s: str):
+        return self._by_name.get(s, None)
 
     def get_intervals(self, i: tuple[Interval, ...]):
         return self._by_intervals.get(i, None)

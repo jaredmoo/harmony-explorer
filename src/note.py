@@ -2,18 +2,18 @@ from prettify import prettify
 from interval import Interval
 
 
-def flatten(symbol: str):
-    if symbol.endswith("#"):
-        return symbol[:1]
+def flatten(name: str):
+    if name.endswith("#"):
+        return name[:1]
     else:
-        return symbol + "b"
+        return name + "b"
 
 
-def sharpen(symbol: str):
-    if symbol.endswith("b"):
-        return symbol[:1]
+def sharpen(name: str):
+    if name.endswith("b"):
+        return name[:1]
     else:
-        return symbol + "#"
+        return name + "#"
 
 
 _rel_note_names = {

@@ -8,7 +8,7 @@ class Chord:
         self.root = root
         self.chord_label = chord_label
         self.notes = tuple(map(root.add, chord_label.intervals))
-        self.name = str(root) + chord_label.symbol
+        self.name = str(root) + chord_label.name
 
     def __repr__(self):
         return f"{prettify(self.name)} {self.notes}"
