@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from interval import Interval, normalize_octave
+from interval import Interval
 from prettify import prettify
 from typing import Iterable, Self
 
@@ -95,7 +95,7 @@ class Note:
             )
 
         # determine relative octave
-        (i, x_rel_octave) = normalize_octave(i)
+        (i, x_rel_octave) = i.normalize_octave()
 
         # determine name
         x_name = _rel_note_names[self.name][i.major_scale_degree - 1]

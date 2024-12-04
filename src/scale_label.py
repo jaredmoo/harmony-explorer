@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from interval import Interval, interval_index, normalize_octave
+from interval import Interval, interval_index
 from typing import Iterable
 
 
@@ -9,13 +9,16 @@ class ScaleLabel:
         self.name = name
         self.intervals = tuple(map(interval_index.get, intervals))
 
-    def intervals_relative_to(
-        self, interval_from_root: str | Interval
-    ) -> Iterable[Interval]:
-        interval_from_root2 = interval_index.get(interval_from_root)
-        return tuple(
-            [normalize_octave(i - interval_from_root2)[0] for i in self.intervals]
-        )
+    def intervals_relative_to(self, new_root: str | Interval) -> Iterable[Interval]:
+        new_root = interval_index.get(new_root)
+        (new_root, _) = new_root.normalize_octave()
+        result = list()
+        for i in self.intervals:
+            while i < new_root:
+                i = i.up_octave()
+
+            result.append(i - new_root)
+        return result
 
 
 class ScaleLabelIndex:

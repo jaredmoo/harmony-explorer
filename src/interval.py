@@ -14,6 +14,10 @@ _major_scale_degree_semitones = {
     9: 14,
     10: 16,
     11: 17,
+    12: 19,
+    13: 21,
+    14: 23,
+    15: 24,
 }
 
 
@@ -23,6 +27,11 @@ class Interval:
     rel_semitones: int
 
     def __init__(self, major_scale_degree: int, rel_semitones: int):
+        # if major_scale_degree < 1 or major_scale_degree > 11:
+        #    raise ValueError(
+        #        f"Major scale degree {major_scale_degree} is not currently supported."
+        #    )
+
         self.major_scale_degree = major_scale_degree
         self.rel_semitones = rel_semitones
         self.semitones = (
@@ -55,17 +64,24 @@ class Interval:
 
     def __sub__(self, other: Self) -> Self:
         # walk from 'other' up to 'self'
-        rel_major_scale_degrees = 1
+        rel_major_scale_degrees = 0
         rel_semitones = 0
 
+        # Suppose we start from other = (2, 0), self = (7, 0)
+        # current = (2, 0) -> diff = (1, 0)
+        # current = (3, 0) -> diff = (2, 0)
+        # current = (4, 0) -> diff = (3, -1)
+        # current = (5, 0) -> diff = (4, 0)
+        # current = (6, 0) -> diff = (5, 0)
+        # current = (7, 0) -> diff = (6, 0)
         for curr_major_scale_degree in range(
-            other.major_scale_degree, self.major_scale_degree
+            other.major_scale_degree, self.major_scale_degree + 1
         ):
             if curr_major_scale_degree in (4, 8, 11, 15):
                 rel_semitones -= 1
+            rel_major_scale_degrees += 1
             if rel_major_scale_degrees in (4, 8, 11, 15):
                 rel_semitones += 1
-            rel_major_scale_degrees += 1
 
         rel_semitones += self.rel_semitones
         rel_semitones -= other.rel_semitones
@@ -75,19 +91,24 @@ class Interval:
             rel_semitones,
         )
 
+    def up_octave(self) -> Self:
+        return Interval(self.major_scale_degree + 7, self.rel_semitones)
 
-def normalize_octave(i: Interval) -> tuple[Self, int]:
-    x_major_scale_degrees = i.major_scale_degree
-    x_rel_octave = 0
+    def down_octave(self) -> Self:
+        return Interval(self.major_scale_degree - 7, self.rel_semitones)
 
-    while x_major_scale_degrees >= 8:
-        x_rel_octave += 1
-        x_major_scale_degrees -= 7
-    while x_major_scale_degrees < 0:
-        x_rel_octave -= 1
-        x_major_scale_degrees += 7
+    def normalize_octave(self) -> tuple[Self, int]:
+        x_major_scale_degrees = self.major_scale_degree
+        x_rel_octave = 0
 
-    return (Interval(x_major_scale_degrees, i.rel_semitones), x_rel_octave)
+        while x_major_scale_degrees >= 8:
+            x_rel_octave += 1
+            x_major_scale_degrees -= 7
+        while x_major_scale_degrees < 0:
+            x_rel_octave -= 1
+            x_major_scale_degrees += 7
+
+        return (Interval(x_major_scale_degrees, self.rel_semitones), x_rel_octave)
 
 
 _values: list[Interval] = [
