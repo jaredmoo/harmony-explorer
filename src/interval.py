@@ -2,6 +2,20 @@ from dataclasses import dataclass
 from prettify import prettify
 from typing import Iterable, Self
 
+_major_scale_degree_semitones = {
+    1: 0,
+    2: 2,
+    3: 4,
+    4: 5,
+    5: 7,
+    6: 9,
+    7: 11,
+    8: 12,
+    9: 14,
+    10: 16,
+    11: 17,
+}
+
 
 @dataclass
 class Interval:
@@ -11,7 +25,10 @@ class Interval:
     def __init__(self, major_scale_degree: int, rel_semitones: int):
         self.major_scale_degree = major_scale_degree
         self.rel_semitones = rel_semitones
-        self.semitones = (major_scale_degree - 1) * 2 + rel_semitones
+        self.semitones = (
+            _major_scale_degree_semitones[major_scale_degree] + rel_semitones
+        )
+
         self.name = (
             "b" if rel_semitones == -1 else "#" if rel_semitones == 1 else ""
         ) + str(major_scale_degree)
@@ -42,7 +59,7 @@ class Interval:
         rel_semitones = 0
 
         for curr_major_scale_degree in range(
-            other.major_scale_degree + 1, self.major_scale_degree + 1
+            other.major_scale_degree, self.major_scale_degree
         ):
             if curr_major_scale_degree in (4, 8, 11, 15):
                 rel_semitones -= 1
@@ -80,6 +97,7 @@ _values: list[Interval] = [
     Interval(3, -1),
     Interval(3, 0),
     Interval(4, 0),
+    Interval(4, 1),
     Interval(5, -1),
     Interval(5, 0),
     Interval(5, 1),
@@ -96,10 +114,6 @@ _values: list[Interval] = [
     Interval(11, -1),
     Interval(11, 0),
     Interval(11, 1),
-    Interval(12, -1),
-    Interval(12, 0),
-    Interval(13, -1),
-    Interval(13, 0),
 ]
 
 

@@ -132,7 +132,7 @@ for c in chord_label_index.values():
             )
 
     # extensions
-    for i in ["b7", "7", "b9", "9", "#9", "11", "#11", "b13", "13"]:
+    for i in ["b7", "7", "b9", "9", "#9", "11", "#11"]:
         relationships.add_with_interval_omitted(
             RelationshipType("de-extend", "extend"), c, i
         )
@@ -145,7 +145,6 @@ for c in chord_label_index.values():
         ("b9", "#9"),
         ("9", "#9"),
         ("11", "#11"),
-        ("b13", "13"),
     ]:
         relationships.add_with_interval_changed(
             RelationshipType("interchange", "interchange"), c, i1, i2
