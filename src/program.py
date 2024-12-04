@@ -18,6 +18,11 @@ def open_data_write(filename: str):
     return open(f"data/{filename}", "w", encoding="utf8")
 
 
+# Write intervals
+with open_data_write("intervals.txt") as f:
+    for i in interval_index.values:
+        print(f"{i} ({i.semitones} total semitones)", file=f)
+
 # Write differences between intervals
 with open_data_write("interval_diffs.txt") as f:
     for x in range(len(interval_index.values)):
