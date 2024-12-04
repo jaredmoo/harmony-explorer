@@ -1,11 +1,11 @@
-import interval
+from interval import Interval, interval_index
 from typing import Iterable
 
 
 class ScaleLabel:
-    def __init__(self, name, intervals: Iterable[str | interval.Interval]):
+    def __init__(self, name, intervals: Iterable[str | Interval]):
         self.name = name
-        self.intervals = tuple(map(interval.index.get, intervals))
+        self.intervals = tuple(map(interval_index.get, intervals))
 
 
 class ScaleLabelIndex:
@@ -29,8 +29,8 @@ class ScaleLabelIndex:
         return self._by_name[name]
 
 
-index = ScaleLabelIndex()
-index.add_many(
+scale_label_index = ScaleLabelIndex()
+scale_label_index.add_many(
     [
         ScaleLabel(
             "lydian", ["1", "2", "3", "b5", "5", "6", "7", "8", "9", "10", "#11"]

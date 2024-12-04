@@ -1,5 +1,5 @@
 from prettify import prettify
-import interval
+from interval import Interval
 
 
 def flatten(symbol: str):
@@ -38,11 +38,11 @@ _rel_note_names = {
 }
 
 # Note names that we support as scale roots, for generating intervals from, etc
-base_names = sorted(_rel_note_names.keys())
+root_note_names = sorted(_rel_note_names.keys())
 
 # All base note names, plus note names with 1 level of weirdness (B#, Cb, E#, Fb, and double flats / double sharps)
 # that we consider to be reachable, but you wouldn't use them as a scale root
-reachable_names = [
+valid_notes_names = [
     "Abb",
     "Ab",
     "A",
@@ -82,7 +82,7 @@ reachable_names = [
 
 class Note:
     def __init__(self, name: str, rel_octave: int = 0):
-        if name not in reachable_names:
+        if name not in valid_notes_names:
             raise ValueError(f"Invalid note name {name}")
 
         self.name = name
@@ -95,9 +95,9 @@ class Note:
             else "↓" * (-1 * self.rel_octave) if self.rel_octave < 0 else ""
         )
 
-    def add(self, i: interval.Interval):
+    def add(self, i: Interval):
         # Don't support generating intervals from double flats or double sharps etc
-        if self.name not in base_names:
+        if self.name not in root_note_names:
             raise ValueError(
                 f"{self.name} is a reachable note, but not supported as the base of an interval."
             )
@@ -120,7 +120,7 @@ class Note:
             x_name = sharpen(x_name)
 
         # don't support generating abominations like E##, B##, Fbb, or Cbb
-        if x_name not in reachable_names:
+        if x_name not in valid_notes_names:
             raise ValueError(
                 f"{str(self)} interval {i} would have resulted in unsupported note {prettify(x_name)}"
             )
@@ -128,4 +128,4 @@ class Note:
         return Note(x_name, x_rel_octave)
 
 
-roots = [Note(n, 0) for n in base_names]
+root_notes = [Note(n, 0) for n in root_note_names]

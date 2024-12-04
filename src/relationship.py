@@ -1,7 +1,7 @@
-from typing import Iterable
-import interval
+from chord_label import ChordLabel, chord_label_index
 from collections import namedtuple
-import chord_label
+from interval import Interval, interval_index
+from typing import Iterable
 
 
 def _tuple_remove(t: tuple, a):
@@ -39,8 +39,8 @@ class Relationships(list):
     def add(
         self,
         type: RelationshipType,
-        c1: chord_label.ChordLabel,
-        c2: chord_label.ChordLabel,
+        c1: ChordLabel,
+        c2: ChordLabel,
     ):
         self._r.append(Relationship(type, c1, c2))
         self._r.append(Relationship(type.inverse(), c2, c1))
@@ -48,18 +48,18 @@ class Relationships(list):
     def add_with_interval_omitted(
         self,
         type: RelationshipType,
-        c: chord_label.ChordLabel,
-        i: str | interval.Interval,
+        c: ChordLabel,
+        i: str | Interval,
     ):
         self.add_with_intervals_omitted(type, c, [i])
 
     def add_with_intervals_omitted(
         self,
         type: RelationshipType,
-        c: chord_label.ChordLabel,
-        ii: Iterable[str | interval.Interval],
+        c: ChordLabel,
+        ii: Iterable[str | Interval],
     ):
-        ii2 = map(interval.index.get, ii)
+        ii2 = map(interval_index.get, ii)
 
         intervals2 = list(c.intervals)
         for i in ii2:
@@ -67,22 +67,22 @@ class Relationships(list):
                 return
             intervals2.remove(i)
 
-        c2 = chord_label.index.get_intervals(tuple(intervals2))
+        c2 = chord_label_index.get_intervals(tuple(intervals2))
         if c2 is not None:
             self.add(type, c, c2)
 
     def add_with_interval_changed(
         self,
         type: RelationshipType,
-        c: chord_label.ChordLabel,
-        i1: str | interval.Interval,
-        i2: str | interval.Interval,
+        c: ChordLabel,
+        i1: str | Interval,
+        i2: str | Interval,
     ):
-        i1 = interval.index.get(i1)
-        i2 = interval.index.get(i2)
+        i1 = interval_index.get(i1)
+        i2 = interval_index.get(i2)
         if i1 in c.intervals:
             intervals2 = _tuple_replace(c.intervals, i1, i2)
-            c2 = chord_label.index.get_intervals(intervals2)
+            c2 = chord_label_index.get_intervals(intervals2)
             if c2 is not None:
                 self.add(type, c, c2)
 
@@ -105,7 +105,7 @@ class Relationships(list):
 # invert
 
 relationships = Relationships()
-for c in chord_label.index.values():
+for c in chord_label_index.values():
     relationships.add_with_interval_omitted(
         RelationshipType("neutralize", "make major"), c, "3"
     )

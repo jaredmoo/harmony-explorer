@@ -1,13 +1,12 @@
-import interval
+from interval import Interval, interval_index
 from prettify import prettify
 from scale_label import ScaleLabel
 from typing import Iterable
-import io
 
 
 class ChordLabel:
-    def __init__(self, intervals: Iterable[str | interval.Interval], symbol: str):
-        self.intervals = tuple(map(interval.index.get, intervals))
+    def __init__(self, intervals: Iterable[str | Interval], symbol: str):
+        self.intervals = tuple(map(interval_index.get, intervals))
         self.symbol = symbol
 
     def __repr__(self):
@@ -16,35 +15,35 @@ class ChordLabel:
     def __lt__(self, other):
         return self.intervals < other.intervals
 
-    def extend_with(self, extension_interval: str | interval.Interval):
-        extension_interval = interval.index.get(extension_interval)
+    def extend_with(self, extension_interval: str | Interval):
+        extension_interval = interval_index.get(extension_interval)
 
         new_intervals = self.intervals + (extension_interval,)
 
         new_chord_symbol = self.symbol + "(add" + extension_interval.symbol + ")"
         if (
-            interval.index.get("b7") in self.intervals
-            or interval.index.get("7") in self.intervals
+            interval_index.get("b7") in self.intervals
+            or interval_index.get("7") in self.intervals
         ):
             if "9" in extension_interval.symbol:
                 # We are extending a (M)7 to a (M)(b/#)9 chord
                 new_chord_symbol = self.symbol.replace("7", extension_interval.symbol)
             elif (
-                interval.index.get("9") in self.intervals
+                interval_index.get("9") in self.intervals
                 and "11" in extension_interval.symbol
             ):
                 # We are extending a 9 chord to a (#)11 chord
                 new_chord_symbol = self.symbol.replace("9", extension_interval.symbol)
             elif "11" == extension_interval.symbol:
                 # We are extending a b/#9 chord with an 11
-                if interval.index.get("b9") in self.intervals:
+                if interval_index.get("b9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("b9", "11(b9)")
-                elif interval.index.get("#9") in self.intervals:
+                elif interval_index.get("#9") in self.intervals:
                     new_chord_symbol = self.symbol.replace("#9", "11(#9)")
             elif "#11" == extension_interval.symbol and (
-                interval.index.get("b9") in self.intervals
-                or interval.index.get("9") in self.intervals
-                or interval.index.get("#9") in self.intervals
+                interval_index.get("b9") in self.intervals
+                or interval_index.get("9") in self.intervals
+                or interval_index.get("#9") in self.intervals
             ):
                 # We are extending a (b/#)9 chord with a #11
                 new_chord_symbol = self.symbol + extension_interval.symbol
@@ -156,11 +155,11 @@ for c in list(_values):
     # 9 is octave away from 2, so 9 & sus2 are redundant, and #9 & sus2 are a b9 away from each other.
     # b9 & 2 are a M7 away from each other, but it's too dissonant to include for now until we have
     # better relationships implemented.
-    if interval.index.get("2") in c.intervals:
+    if interval_index.get("2") in c.intervals:
         continue
 
     # dim chords are already dissonant enough to not extend them.
-    if interval.index.get("b5") in c.intervals:
+    if interval_index.get("b5") in c.intervals:
         continue
 
     _values.append(c.extend_with("b9"))
@@ -173,21 +172,21 @@ for c in list(_values):
 # Just trying to keep it simple at first.
 for c in list(_values):
     # See note above about not generating rare chords (i.e. with internal b9's).
-    if interval.index.get("5") in c.intervals:
+    if interval_index.get("5") in c.intervals:
         continue
 
     # 11 is octave away from 4, so 11 & sus4 are redundant, and #11 & sus4 are b9 away from each other.
-    if interval.index.get("4") in c.intervals:
+    if interval_index.get("4") in c.intervals:
         continue
 
     # dim chords are already dissonant enough to not extend them.
-    if interval.index.get("b5") in c.intervals:
+    if interval_index.get("b5") in c.intervals:
         continue
 
-    if interval.index.get("3") not in c.intervals:
+    if interval_index.get("3") not in c.intervals:
         _values.append(c.extend_with("11"))
 
-    if interval.index.get("b3") not in c.intervals:
+    if interval_index.get("b3") not in c.intervals:
         _values.append(c.extend_with("#11"))
 
 
@@ -195,7 +194,7 @@ for c in list(_values):
 class ChordLabelIndex:
     def __init__(self, values: Iterable[ChordLabel]):
         self._by_symbol: dict[str, ChordLabel] = dict()
-        self._by_intervals: dict[Iterable[interval.Interval], ChordLabel] = dict()
+        self._by_intervals: dict[Iterable[Interval], ChordLabel] = dict()
 
         for v in values:
             if v.symbol in self._by_symbol.keys():
@@ -218,11 +217,11 @@ class ChordLabelIndex:
     def get_symbol(self, s: str):
         return self._by_symbol.get(s, None)
 
-    def get_intervals(self, i: tuple[interval.Interval, ...]):
+    def get_intervals(self, i: tuple[Interval, ...]):
         return self._by_intervals.get(i, None)
 
     def restrict(self, scale: ScaleLabel):
         return ChordLabelIndex([c for c in self.values() if c.is_in(scale)])
 
 
-index = ChordLabelIndex(_values)
+chord_label_index = ChordLabelIndex(_values)

@@ -1,5 +1,5 @@
-from typing import Iterable
 from prettify import prettify
+from typing import Iterable
 
 
 class Interval:
@@ -77,4 +77,4 @@ class IntervalIndex:
             raise TypeError(type(x))
 
 
-index = IntervalIndex(_values)
+interval_index = IntervalIndex(_values)
