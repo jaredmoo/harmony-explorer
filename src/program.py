@@ -18,10 +18,22 @@ def open_data_write(filename: str):
     return open(f"data/{filename}", "w", encoding="utf8")
 
 
+# Write differences between intervals
+with open_data_write("interval_diffs.txt") as f:
+    for x in range(len(interval_index.values)):
+        i1 = interval_index.values[x]
+        for y in range(x, len(interval_index.values)):
+            i2 = interval_index.values[y]
+            print(
+                f"{i1} {(i1.major_scale_degree, i1.rel_semitones)} to {i2} {(i2.major_scale_degree, i2.rel_semitones)} is a {i2 - i1}",
+                file=f,
+            )
+
+
 # Write all notes and intervals between them
 with open_data_write("note_intervals.txt") as f:
     for r in root_notes:
-        for i in interval_index.values():
+        for i in interval_index.values:
             n2 = r.add(i)
             print(f"{r} interval {i} = {n2}", file=f)
 
@@ -75,3 +87,7 @@ with open_data_write("relationships.txt") as f:
     f.truncate()
     for rel in relationships:
         print(rel.type.name, " ", rel.c1, " -> ", rel.c2, file=f)
+
+ionian = scale_label_index.by_name("ionian")
+for i in ionian.intervals:
+    print("Relative to", i, ionian.intervals_relative_to(i))

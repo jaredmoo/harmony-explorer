@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from interval import Interval
+from interval import Interval, normalize_octave
 from prettify import prettify
 from typing import Iterable, Self
 
@@ -95,15 +95,10 @@ class Note:
             )
 
         # determine relative octave
-        x_rel_major_scale_degrees = i.major_scale_degree
-        x_rel_octave = 0
-
-        while x_rel_major_scale_degrees >= 8:
-            x_rel_octave += 1
-            x_rel_major_scale_degrees -= 7
+        (i, x_rel_octave) = normalize_octave(i)
 
         # determine name
-        x_name = _rel_note_names[self.name][x_rel_major_scale_degrees - 1]
+        x_name = _rel_note_names[self.name][i.major_scale_degree - 1]
 
         # apply semitones
         if i.rel_semitones == -1:

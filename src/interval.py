@@ -1,8 +1,13 @@
+from dataclasses import dataclass
 from prettify import prettify
-from typing import Iterable
+from typing import Iterable, Self
 
 
+@dataclass
 class Interval:
+    major_scale_degree: int
+    rel_semitones: int
+
     def __init__(self, major_scale_degree: int, rel_semitones: int):
         self.major_scale_degree = major_scale_degree
         self.rel_semitones = rel_semitones
@@ -11,6 +16,15 @@ class Interval:
             "b" if rel_semitones == -1 else "#" if rel_semitones == 1 else ""
         ) + str(major_scale_degree)
         self.pretty = prettify(self.name)
+
+    def __eq__(self, other: Self) -> bool:
+        return (
+            self.major_scale_degree == other.major_scale_degree
+            and self.rel_semitones == other.semitones
+        )
+
+    def __hash__(self):
+        return hash((self.major_scale_degree, self.rel_semitones))
 
     def __repr__(self):
         return self.pretty
@@ -21,6 +35,42 @@ class Interval:
         else:
             # semitones are equal
             return self.name < other.name
+
+    def __sub__(self, other: Self) -> Self:
+        # walk from 'other' up to 'self'
+        rel_major_scale_degrees = 1
+        rel_semitones = 0
+
+        for curr_major_scale_degree in range(
+            other.major_scale_degree + 1, self.major_scale_degree + 1
+        ):
+            if curr_major_scale_degree in (4, 8, 11, 15):
+                rel_semitones -= 1
+            if rel_major_scale_degrees in (4, 8, 11, 15):
+                rel_semitones += 1
+            rel_major_scale_degrees += 1
+
+        rel_semitones += self.rel_semitones
+        rel_semitones -= other.rel_semitones
+
+        return Interval(
+            rel_major_scale_degrees,
+            rel_semitones,
+        )
+
+
+def normalize_octave(i: Interval) -> tuple[Self, int]:
+    x_major_scale_degrees = i.major_scale_degree
+    x_rel_octave = 0
+
+    while x_major_scale_degrees >= 8:
+        x_rel_octave += 1
+        x_major_scale_degrees -= 7
+    while x_major_scale_degrees < 0:
+        x_rel_octave -= 1
+        x_major_scale_degrees += 7
+
+    return (Interval(x_major_scale_degrees, i.rel_semitones), x_rel_octave)
 
 
 _values: list[Interval] = [
@@ -56,6 +106,7 @@ _values: list[Interval] = [
 ### Index
 class IntervalIndex:
     def __init__(self, values: Iterable[Interval]):
+        self.values = list(values)
         self._by_name: dict[str, Interval] = dict()
         for v in values:
             if v.name in self._by_name.keys():
@@ -64,9 +115,6 @@ class IntervalIndex:
 
     def __repr__(self):
         return self.values().__repr__()
-
-    def values(self):
-        return self._by_name.values()
 
     def get(self, x) -> Interval:
         if isinstance(x, str):
