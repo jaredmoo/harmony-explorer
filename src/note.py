@@ -16,6 +16,21 @@ def sharpen(name: str):
         return name + "#"
 
 
+_note_name_semitones = {
+    0: ["G##", "A", "Bbb"],
+    1: ["A#", "Bb"],
+    2: ["A##", "B", "Cb"],
+    3: ["B#", "C", "Dbb"],
+    4: ["C#", "Db"],
+    5: ["C##", "D", "Ebb"],
+    6: ["D#", "Eb"],
+    7: ["D##", "E", "Fb"],
+    8: ["E#", "F", "Gbb"],
+    9: ["F#", "Gb"],
+    10: ["F##", "G", "Abb"],
+    11: ["G#", "Ab"],
+}
+
 _rel_note_names = {
     "Ab": ["Ab", "Bb", "C", "Db", "Eb", "F", "G"],
     "A": ["A", "B", "C#", "D", "E", "F#", "G#"],
@@ -42,39 +57,7 @@ root_note_names = sorted(_rel_note_names.keys())
 
 # All base note names, plus note names with 1 level of weirdness (B#, Cb, E#, Fb, and double flats / double sharps)
 # that we consider to be reachable, but you wouldn't use them as a scale root
-valid_notes_names = [
-    "Abb",
-    "Ab",
-    "A",
-    "A#",
-    "A##",
-    "Bbb",
-    "Bb",
-    "B",
-    "B#",  # B## is abomination
-    "Cb",
-    "C",
-    "C#",
-    "C##",  # Cbb is abomination
-    "Dbb",
-    "Db",
-    "D",
-    "D#",
-    "D##",
-    "Ebb",
-    "Eb",
-    "E",
-    "E#",  # E## is abomination
-    "Fb",
-    "F",
-    "F#",
-    "F##",  # F## is abomination
-    "Gbb",
-    "Gb",
-    "G",
-    "G#",
-    "G##",
-]
+valid_notes_names = [x for xx in _note_name_semitones.values() for x in xx]
 
 # Any other note names (including B##, Cbb, E##, Fbb, and triple flats / triple sharps)
 # are considered abominations are are completel not allowed
