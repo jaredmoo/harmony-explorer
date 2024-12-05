@@ -78,13 +78,13 @@ class Interval:
         # current = (6, 0) -> diff = (5, 0)
         # current = (7, 0) -> diff = (6, 0)
         for curr_major_scale_degree in range(
-            other.major_scale_degree, self.major_scale_degree
+            other.major_scale_degree + 1, self.major_scale_degree + 1
         ):
+            rel_major_scale_degrees += 1
             if curr_major_scale_degree in (4, 8, 11, 15):
                 rel_semitones -= 1
             if rel_major_scale_degrees in (4, 8, 11, 15):
                 rel_semitones += 1
-            rel_major_scale_degrees += 1
 
         rel_semitones += self.rel_semitones
         rel_semitones -= other.rel_semitones
