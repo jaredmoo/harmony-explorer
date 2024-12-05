@@ -42,7 +42,7 @@ class Interval:
         self.semitones = _total_semitones(major_scale_degree) + rel_semitones
 
         self.name = (
-            "b" if rel_semitones == -1 else "#" if rel_semitones == 1 else ""
+            "b" * (-rel_semitones) if rel_semitones < 0 else "#" * rel_semitones
         ) + str(major_scale_degree)
         self.pretty = prettify(self.name)
 
@@ -78,8 +78,12 @@ class Interval:
         # current = (6, 0) -> diff = (5, 0)
         # current = (7, 0) -> diff = (6, 0)
         for curr_major_scale_degree in range(
-            other.major_scale_degree + 1, self.major_scale_degree + 1
+            other.major_scale_degree + 1, self.major_scale_degree
         ):
+            print(
+                f"{other} - {self}: currently at major scale degree {curr_major_scale_degree}, diff so far is {rel_major_scale_degrees},{rel_semitones}"
+            )
+
             rel_major_scale_degrees += 1
             if curr_major_scale_degree in (4, 8, 11, 15):
                 rel_semitones -= 1
@@ -88,6 +92,10 @@ class Interval:
 
         rel_semitones += self.rel_semitones
         rel_semitones -= other.rel_semitones
+
+        print(
+            f"{other} - {self}: after final adjustment, diff is {rel_major_scale_degrees},{rel_semitones}"
+        )
 
         return Interval(
             rel_major_scale_degrees,

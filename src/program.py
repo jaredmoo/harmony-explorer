@@ -30,10 +30,13 @@ with open_data_write("interval_diffs.txt") as f:
         for y in range(x, len(interval_index.values)):
             i2 = interval_index.values[y]
             print(
-                f"{i1} {(i1.major_scale_degree, i1.rel_semitones)} to {i2} {(i2.major_scale_degree, i2.rel_semitones)} is a {i2 - i1}",
+                f"{i1} to {i2} is a {i2 - i1}",
                 file=f,
             )
 
+print("------------")
+interval_index.get("b5") - interval_index.get("#4")
+exit(0)
 
 # Write all notes and intervals between them
 with open_data_write("note_intervals.txt") as f:
