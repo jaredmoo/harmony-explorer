@@ -34,9 +34,6 @@ with open_data_write("interval_diffs.txt") as f:
                 file=f,
             )
 
-print("------------")
-interval_index.get("b5") - interval_index.get("#4")
-exit(0)
 
 # Write all notes and intervals between them
 with open_data_write("note_intervals.txt") as f:
