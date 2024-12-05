@@ -98,11 +98,10 @@ with open_data_write("relationships.txt") as f:
     for rel in relationships:
         print(rel.type.name, " ", rel.c1, " -> ", rel.c2, file=f)
 
-ionian = scale_label_index.by_name("ionian")
-for i in ionian.intervals:
-    print(
-        "Relative to root",
-        i,
-        "the same notes have intervals",
-        ionian.intervals_relative_to(i),
-    )
+with open_data_write("scale_label_relative_intervals.txt") as f:
+    for sl in scale_label_index.values():
+        for i in sl.intervals:
+            print(
+                f"In {sl.name} starting from {i}, the same notes have intervals {sl.intervals_relative_to(i)}",
+                file=f,
+            )
