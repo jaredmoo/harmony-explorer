@@ -67,7 +67,7 @@ class Interval:
 
     def __sub__(self, other: Self) -> Self:
         # walk from 'other' up to 'self'
-        rel_major_scale_degrees = 0
+        rel_major_scale_degrees = 1
         rel_semitones = 0
 
         # Suppose we start from other = (2, 0), self = (7, 0)
@@ -78,13 +78,13 @@ class Interval:
         # current = (6, 0) -> diff = (5, 0)
         # current = (7, 0) -> diff = (6, 0)
         for curr_major_scale_degree in range(
-            other.major_scale_degree, self.major_scale_degree + 1
+            other.major_scale_degree, self.major_scale_degree
         ):
             if curr_major_scale_degree in (4, 8, 11, 15):
                 rel_semitones -= 1
-            rel_major_scale_degrees += 1
             if rel_major_scale_degrees in (4, 8, 11, 15):
                 rel_semitones += 1
+            rel_major_scale_degrees += 1
 
         rel_semitones += self.rel_semitones
         rel_semitones -= other.rel_semitones

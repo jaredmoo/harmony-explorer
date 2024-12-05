@@ -52,7 +52,7 @@ class ChordLabel:
 
     def is_in(self, scale: ScaleLabel):
         for i in self.intervals:
-            if i not in scale.intervals:
+            if i.normalize_octave() not in scale.intervals:
                 return False
         return True
 

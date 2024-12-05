@@ -87,10 +87,7 @@ for r in root_notes:
 
 # Dump all chord labels within each scale label, and dump all chords within each scale
 for sl in scale_label_index.values():
-    sl = sl.extended()
-    print(sl)
     chord_labels_in_scale = chord_label_index.restrict(sl)
-    print(chord_labels_in_scale)
     dump_chord_labels(chord_labels_in_scale, f"chord_labels_{sl.name}.txt")
     for r in root_notes:
         dump_chords(chord_labels_in_scale, r, f"chords_{r.name}_{sl.name}.txt")
@@ -103,4 +100,9 @@ with open_data_write("relationships.txt") as f:
 
 ionian = scale_label_index.by_name("ionian")
 for i in ionian.intervals:
-    print("Relative to", i, ionian.intervals_relative_to(i))
+    print(
+        "Relative to root",
+        i,
+        "the same notes have intervals",
+        ionian.intervals_relative_to(i),
+    )
