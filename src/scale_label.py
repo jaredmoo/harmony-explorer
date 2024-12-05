@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from interval import Interval, interval_index
-from typing import Iterable
+from typing import Iterable, Self
 
 
 @dataclass
@@ -10,15 +10,25 @@ class ScaleLabel:
         self.intervals = tuple(map(interval_index.get, intervals))
 
     def intervals_relative_to(self, new_root: str | Interval) -> Iterable[Interval]:
-        new_root = interval_index.get(new_root)
-        (new_root, _) = new_root.normalize_octave()
+        new_root = interval_index.get(new_root).normalize_octave()
+
         result = list()
         for i in self.intervals:
             while i < new_root:
                 i = i.up_octave()
 
             result.append(i - new_root)
+        result.sort()
         return result
+
+    def extended(self) -> Self:
+        extended_intervals = [
+            i.up_octave() for i in self.intervals if i.major_scale_degree < 5
+        ]
+        return ScaleLabel(self.name, self.intervals + tuple(extended_intervals))
+
+    def __repr__(self) -> str:
+        return f"{self.name} ({self.intervals})"
 
 
 class ScaleLabelIndex:
@@ -45,30 +55,15 @@ class ScaleLabelIndex:
 scale_label_index = ScaleLabelIndex()
 scale_label_index.add_many(
     [
-        ScaleLabel(
-            "lydian", ["1", "2", "3", "#4", "5", "6", "7", "8", "9", "10", "#11"]
-        ),
-        ScaleLabel("ionian", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]),
-        ScaleLabel(
-            "mixolydian", ["1", "2", "3", "4", "5", "6", "b7", "8", "9", "10", "11"]
-        ),
-        ScaleLabel(
-            "dorian", ["1", "2", "b3", "4", "5", "6", "b7", "8", "9", "b10", "11"]
-        ),
-        ScaleLabel(
-            "aeolian", ["1", "2", "b3", "4", "5", "b6", "b7", "8", "9", "b10", "11"]
-        ),
-        ScaleLabel(
-            "phrygian", ["1", "b2", "b3", "4", "5", "b6", "b7", "8", "b9", "b10", "11"]
-        ),
-        ScaleLabel(
-            "locrian", ["1", "b2", "b3", "4", "b5", "b6", "b7", "8", "b9", "b10", "11"]
-        ),
-        ScaleLabel("pentatonic", ["1", "2", "4", "5", "6", "8", "9", "11"]),
-        ScaleLabel("minor pentatonic", ["1", "b3", "4", "5", "b7", "8", "b10", "11"]),
-        ScaleLabel(
-            "harmonic minor",
-            ["1", "2", "b3", "4", "5", "b6", "b7", "7", "8", "9", "b10", "11"],
-        ),
+        ScaleLabel("lydian", ["1", "2", "3", "#4", "5", "6", "7"]),
+        ScaleLabel("ionian", ["1", "2", "3", "4", "5", "6", "7"]),
+        ScaleLabel("mixolydian", ["1", "2", "3", "4", "5", "6", "b7"]),
+        ScaleLabel("dorian", ["1", "2", "b3", "4", "5", "6", "b7"]),
+        ScaleLabel("aeolian", ["1", "2", "b3", "4", "5", "b6", "b7"]),
+        ScaleLabel("phrygian", ["1", "b2", "b3", "4", "5", "b6", "b7"]),
+        ScaleLabel("locrian", ["1", "b2", "b3", "4", "b5", "b6", "b7"]),
+        ScaleLabel("pentatonic", ["1", "2", "4", "5", "6"]),
+        ScaleLabel("minor pentatonic", ["1", "b3", "4", "5", "b7"]),
+        ScaleLabel("harmonic minor", ["1", "2", "b3", "4", "5", "b6", "b7", "7"]),
     ]
 )

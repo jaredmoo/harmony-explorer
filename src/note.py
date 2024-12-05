@@ -95,7 +95,7 @@ class Note:
             )
 
         # determine relative octave
-        (i, x_rel_octave) = i.normalize_octave()
+        (i, x_rel_octave) = i.normalize_octave_ex()
 
         # determine name
         x_name = _rel_note_names[self.name][i.major_scale_degree - 1]

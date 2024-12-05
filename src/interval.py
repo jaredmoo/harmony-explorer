@@ -2,6 +2,19 @@ from dataclasses import dataclass
 from prettify import prettify
 from typing import Iterable, Self
 
+
+def _mod_div_octave(major_scale_degree: int) -> tuple[int, int]:
+    if major_scale_degree < 1:
+        raise ValueError(major_scale_degree)
+
+    return ((major_scale_degree - 1) % 7 + 1, (major_scale_degree - 1) // 7)
+
+
+def _total_semitones(major_scale_degree: int) -> int:
+    (major_scale_degree, octave) = _mod_div_octave(major_scale_degree)
+    return _major_scale_degree_semitones[major_scale_degree] + int(12 * octave)
+
+
 _major_scale_degree_semitones = {
     1: 0,
     2: 2,
@@ -10,14 +23,6 @@ _major_scale_degree_semitones = {
     5: 7,
     6: 9,
     7: 11,
-    8: 12,
-    9: 14,
-    10: 16,
-    11: 17,
-    12: 19,
-    13: 21,
-    14: 23,
-    15: 24,
 }
 
 
@@ -34,9 +39,7 @@ class Interval:
 
         self.major_scale_degree = major_scale_degree
         self.rel_semitones = rel_semitones
-        self.semitones = (
-            _major_scale_degree_semitones[major_scale_degree] + rel_semitones
-        )
+        self.semitones = _total_semitones(major_scale_degree) + rel_semitones
 
         self.name = (
             "b" if rel_semitones == -1 else "#" if rel_semitones == 1 else ""
@@ -46,7 +49,7 @@ class Interval:
     def __eq__(self, other: Self) -> bool:
         return (
             self.major_scale_degree == other.major_scale_degree
-            and self.rel_semitones == other.semitones
+            and self.rel_semitones == other.rel_semitones
         )
 
     def __hash__(self):
@@ -97,7 +100,10 @@ class Interval:
     def down_octave(self) -> Self:
         return Interval(self.major_scale_degree - 7, self.rel_semitones)
 
-    def normalize_octave(self) -> tuple[Self, int]:
+    def normalize_octave(self) -> Self:
+        return self.normalize_octave_ex()[0]
+
+    def normalize_octave_ex(self) -> tuple[Self, int]:
         x_major_scale_degrees = self.major_scale_degree
         x_rel_octave = 0
 

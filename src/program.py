@@ -46,13 +46,18 @@ with open_data_write("note_intervals.txt") as f:
 with open_data_write("scale_notes.txt") as f:
     for r in root_notes:
         for sl in scale_label_index.values():
+            sl = sl.extended()
             s = Scale(r, sl)
             print(s, file=f)
 
 # Write each note which scales it (or its enharmonics) is in
 with open_data_write("note_enharmonic_scales.txt") as f:
     for n in valid_notes_names:
-        scales = [Scale(r, sl) for r in root_notes for sl in scale_label_index.values()]
+        scales = [
+            Scale(r, sl.extended())
+            for r in root_notes
+            for sl in scale_label_index.values()
+        ]
         print(n, [s.name for s in scales if s.contains_note_or_enharmonic(n)], file=f)
 
 
@@ -75,14 +80,17 @@ def dump_chords(chord_label_index: ChordLabelIndex, root: Note, file: str):
             print(chord, file=f)
 
 
-# Dump all chord labels and chordsl
+# Dump all chord labels and chord
 dump_chord_labels(chord_label_index, "chord_labels_chromatic.txt")
 for r in root_notes:
     dump_chords(chord_label_index, r, f"chords_{r.name}_chromatic.txt")
 
 # Dump all chord labels within each scale label, and dump all chords within each scale
 for sl in scale_label_index.values():
+    sl = sl.extended()
+    print(sl)
     chord_labels_in_scale = chord_label_index.restrict(sl)
+    print(chord_labels_in_scale)
     dump_chord_labels(chord_labels_in_scale, f"chord_labels_{sl.name}.txt")
     for r in root_notes:
         dump_chords(chord_labels_in_scale, r, f"chords_{r.name}_{sl.name}.txt")
