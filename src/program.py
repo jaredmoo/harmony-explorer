@@ -102,6 +102,6 @@ with open_data_write("scale_label_relative_intervals.txt") as f:
     for sl in scale_label_index.values():
         for i in sl.intervals:
             print(
-                f"In {sl.name} starting from {i}, the same notes have intervals {sl.intervals_relative_to(i)}",
+                f"In {sl.name} starting from {i}, the same notes have intervals {sl.relative_to(i)}",
                 file=f,
             )

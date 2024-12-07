@@ -10,18 +10,6 @@ class ScaleLabel(IntervalSet):
         super().__init__(intervals)
         self.name = name
 
-    def intervals_relative_to(self, new_root: str | Interval) -> Iterable[Interval]:
-        new_root = interval_index.get(new_root).normalize_octave()
-
-        result = list()
-        for i in self.intervals:
-            while i < new_root:
-                i = i.up_octave()
-
-            result.append(i - new_root)
-        result.sort()
-        return result
-
     def extended(self) -> Self:
         extended_intervals = [
             i.up_octave() for i in self.intervals if i.major_scale_degree < 5

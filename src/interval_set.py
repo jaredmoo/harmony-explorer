@@ -12,6 +12,18 @@ class IntervalSet:
     def contains_enharmonics(self, other: Self) -> bool:
         return self.semitone_bitmap & other.semitone_bitmap == other.semitone_bitmap
 
+    def relative_to(self, new_root: str | Interval) -> Iterable[Interval]:
+        new_root = interval_index.get(new_root).normalize_octave()
+
+        result = list()
+        for i in self.intervals:
+            while i < new_root:
+                i = i.up_octave()
+
+            result.append(i - new_root)
+
+        return IntervalSet(result)
+
     def __repr__(self) -> str:
         return "(" + ", ".join(map(repr, self.intervals)) + ")"
 
