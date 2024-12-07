@@ -1,16 +1,17 @@
 from interval import Interval, interval_index
+from interval_set import IntervalSet
 from prettify import prettify
 from scale_label import ScaleLabel
 from typing import Iterable
 
 
-class ChordLabel:
+class ChordLabel(IntervalSet):
     def __init__(self, intervals: Iterable[str | Interval], name: str):
-        self.intervals = tuple(map(interval_index.get, intervals))
+        super().__init__(intervals)
         self.name = name
 
     def __repr__(self):
-        return prettify(self.name) + " (" + " ".join(map(str, self.intervals)) + ")"
+        return prettify(self.name) + " " + super().__repr__()
 
     def __lt__(self, other):
         return self.intervals < other.intervals

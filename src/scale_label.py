@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from interval import Interval, interval_index
+from interval_set import IntervalSet
 from typing import Iterable, Self
 
 
 @dataclass
-class ScaleLabel:
+class ScaleLabel(IntervalSet):
     def __init__(self, name, intervals: Iterable[str | Interval]):
+        super().__init__(intervals)
         self.name = name
-        self.intervals = tuple(map(interval_index.get, intervals))
 
     def intervals_relative_to(self, new_root: str | Interval) -> Iterable[Interval]:
         new_root = interval_index.get(new_root).normalize_octave()
@@ -28,7 +29,7 @@ class ScaleLabel:
         return ScaleLabel(self.name, self.intervals + tuple(extended_intervals))
 
     def __repr__(self) -> str:
-        return f"{self.name} ({self.intervals})"
+        return f"{self.name} {self.intervals}"
 
 
 class ScaleLabelIndex:

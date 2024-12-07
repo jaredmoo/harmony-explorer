@@ -52,6 +52,9 @@ class Interval:
             and self.rel_semitones == other.rel_semitones
         )
 
+    def enharmonic_equals(self, other: Self) -> bool:
+        return self.semitones == other.semitones
+
     def __hash__(self):
         return hash((self.major_scale_degree, self.rel_semitones))
 
