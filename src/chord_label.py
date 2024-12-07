@@ -51,12 +51,6 @@ class ChordLabel(IntervalSet):
 
         return ChordLabel(new_intervals, new_chord_name)
 
-    def is_in(self, scale: ScaleLabel):
-        for i in self.intervals:
-            if i.normalize_octave() not in scale.intervals:
-                return False
-        return True
-
 
 _values: list[ChordLabel] = [
     ChordLabel(("1", "3", "5"), ""),
@@ -165,7 +159,10 @@ for c in list(_values):
 
     _values.append(c.extend_with("b9"))
     _values.append(c.extend_with("9"))
-    _values.append(c.extend_with("#9"))
+
+    # #9 is same as b3, so don't add #9 if there is already b3
+    if not interval_index.get("b3") in c.intervals:
+        _values.append(c.extend_with("#9"))
 
 
 ### 11 chords
@@ -222,7 +219,13 @@ class ChordLabelIndex:
         return self._by_intervals.get(i, None)
 
     def restrict(self, scale: ScaleLabel):
-        return ChordLabelIndex([c for c in self.values() if c.is_in(scale)])
+        return ChordLabelIndex(
+            [
+                c
+                for c in self.values()
+                if scale.contains_enharmonics(c.normalize_octave())
+            ]
+        )
 
 
 chord_label_index = ChordLabelIndex(_values)

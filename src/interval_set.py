@@ -24,6 +24,9 @@ class IntervalSet:
 
         return IntervalSet(result)
 
+    def normalize_octave(self) -> Self:
+        return IntervalSet([i.normalize_octave() for i in self.intervals])
+
     def __repr__(self) -> str:
         return "(" + ", ".join(map(repr, self.intervals)) + ")"
 
