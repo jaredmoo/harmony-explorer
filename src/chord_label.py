@@ -89,7 +89,7 @@ _values: list[ChordLabel] = [
     # dim
     ChordLabel(("1", "b3", "b5", "6"), "dim7"),  # 6 is actually bb7
     ChordLabel(("1", "b3", "b5", "b7"), "h7"),
-    ChordLabel(("1", "b3", "b5", "b7"), "hM7"),
+    ChordLabel(("1", "b3", "b5", "7"), "hM7"),
     # aug
     ChordLabel(("1", "3", "#5", "b7"), "+7"),
     ChordLabel(("1", "3", "#5", "7"), "+M7"),

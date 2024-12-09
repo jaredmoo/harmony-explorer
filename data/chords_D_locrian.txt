@@ -1,7 +1,6 @@
 Dm(no5) (D, F)
 D° (D, F, A♭)
 Dø7 (D, F, A♭, C)
-Dø△7 (D, F, A♭, C)
 Dm(no5)7 (D, F, C)
 Dm(no5)♭9 (D, F, C, E♭↑)
 Dm(no5)11(♭9) (D, F, C, E♭↑, G↑)
