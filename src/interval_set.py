@@ -12,8 +12,14 @@ class SemitoneSet:
 
     def transpose(self, i: int):
         copy = SemitoneSet([])
-        copy.bitmap = self.bitmap << i
+        copy.bitmap = self.bitmap << i if i >= 0 else self.bitmap >> -i
         return copy
+
+    def up_octave(self):
+        return self.transpose(12)
+
+    def down_octave(self):
+        return self.transpose(-12)
 
     def normalize_octave(self):
         copy = SemitoneSet([])

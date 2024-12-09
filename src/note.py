@@ -114,6 +114,12 @@ class Note:
 
         return Note(x_name, x_rel_octave)
 
+    def up_octave(self) -> Self:
+        return Note(self.name, self.rel_octave + 1)
+
+    def down_octave(self) -> Self:
+        return Note(self.name, self.rel_octave - 1)
+
     def enharmonic_note_names(self) -> Iterable[str]:
         return _note_name_enharmonics[self.name]
 

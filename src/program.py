@@ -81,17 +81,31 @@ def dump_chords(sl: ScaleLabel, scale_root_note: Note, file: str):
             # For each potential chord
             for chord_label in chord_labels:
                 # Translate the chord's intervals so that it's rooted on the chosen chord root note
-                chord_semitones_transposed_normalized = (
-                    chord_label.semitone_bitmap.transpose(
-                        chord_root_interval.semitones
-                    ).normalize_octave()
+                chord_semitones_transposed = chord_label.semitone_bitmap.transpose(
+                    chord_root_interval.semitones
                 )
 
-                if sl.contains_enharmonics(chord_semitones_transposed_normalized):
+                if sl.contains_enharmonics(
+                    chord_semitones_transposed.normalize_octave()
+                ):
                     # The chord label (translated to be rooted on this chord root note) is in the scale
                     # Print this chord, but with the note names coming from the scale
+                    chord_notes = tuple(
+                        [
+                            n
+                            for (n, i) in s.note_intervals()
+                            if chord_semitones_transposed.contains_semitone(i.semitones)
+                        ]
+                        + [
+                            n.up_octave()
+                            for (n, i) in s.note_intervals()
+                            if chord_semitones_transposed.down_octave().contains_semitone(
+                                i.semitones
+                            )
+                        ]
+                    )
                     print(
-                        f"{chord_root_note}{prettify(chord_label.name)} {tuple([n for (n, i) in s.note_intervals() if chord_semitones_transposed_normalized.contains_semitone(i.semitones)])}",
+                        f"{chord_root_note}{prettify(chord_label.name)} {chord_notes}",
                         file=f,
                     )
 
