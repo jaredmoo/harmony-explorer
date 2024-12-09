@@ -70,27 +70,45 @@ def dump_chord_labels(cli: ChordLabelIndex, file: str):
             print(cli.by_intervals(i), file=f)
 
 
-def dump_chords(chord_label_index: ChordLabelIndex, root: Note, file: str):
+def dump_chords(sl: ScaleLabel, scale_root_note: Note, file: str):
     chord_labels = list(chord_label_index.values())
     chord_labels.sort()
     with open_data_write(file) as f:
         f.truncate()
-        for cl in chord_labels:
-            chord = Chord(root, cl)
-            print(chord, file=f)
+        s = Scale(scale_root_note, sl)
+        # For each note & interval in this scale that could be the root of the chord
+        for chord_root_note, chord_root_interval in s.note_intervals():
+            # For each potential chord
+            for chord_label in chord_labels:
+                # Translate the chord's intervals so that it's rooted on the chosen chord root note
+                chord_semitones_transposed_normalized = (
+                    chord_label.semitone_bitmap.transpose(
+                        chord_root_interval.semitones
+                    ).normalize_octave()
+                )
+
+                if sl.contains_enharmonics(chord_semitones_transposed_normalized):
+                    # The chord label (translated to be rooted on this chord root note) is in the scale
+                    # Print this chord, but with the note names coming from the scale
+                    print(
+                        f"{chord_root_note}{prettify(chord_label.name)} {tuple([n for (n, i) in s.note_intervals() if chord_semitones_transposed_normalized.contains_semitone(i.semitones)])}",
+                        file=f,
+                    )
 
 
 # Dump all chord labels and chord
-dump_chord_labels(chord_label_index, "chord_labels_chromatic.txt")
-for r in root_notes:
-    dump_chords(chord_label_index, r, f"chords_{r.name}_chromatic.txt")
+# dump_chord_labels(chord_label_index, "chord_labels_chromatic.txt")
+# for r in root_notes:
+#     dump_chords(
+#         scale_label_index.by_name("chromatic"), r, f"chords_{r.name}_chromatic.txt"
+#     )
 
 # Dump all chord labels within each scale label, and dump all chords within each scale
 for sl in scale_label_index.values():
-    chord_labels_in_scale = chord_label_index.restrict(sl)
-    dump_chord_labels(chord_labels_in_scale, f"chord_labels_{sl.name}.txt")
+    # chord_labels_in_scale = chord_label_index.restrict(sl)
+    # dump_chord_labels(chord_labels_in_scale, f"chord_labels_{sl.name}.txt")
     for r in root_notes:
-        dump_chords(chord_labels_in_scale, r, f"chords_{r.name}_{sl.name}.txt")
+        dump_chords(sl, r, f"chords_{r.name}_{sl.name}.txt")
 
 # Dump all relationships
 with open_data_write("relationships.txt") as f:

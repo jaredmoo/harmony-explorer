@@ -18,3 +18,6 @@ class Scale:
         return any(note_name == n.name for n in self.notes) or any(
             note_name == e for n in self.notes for e in n.enharmonic_note_names()
         )
+
+    def note_intervals(self):
+        return zip(self.notes, self.scale_label.intervals)

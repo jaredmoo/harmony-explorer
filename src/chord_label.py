@@ -218,14 +218,14 @@ class ChordLabelIndex:
     def by_intervals(self, i: tuple[Interval, ...]):
         return self._by_intervals.get(i, None)
 
-    def restrict(self, scale: ScaleLabel):
-        return ChordLabelIndex(
-            [
-                c
-                for c in self.values()
-                if scale.contains_enharmonics(c.normalize_octave())
-            ]
-        )
+    # def restrict(self, scale: ScaleLabel):
+    #     return ChordLabelIndex(
+    #         [
+    #             c
+    #             for c in self.values()
+    #             if scale.contains_enharmonics(c.normalize_octave())
+    #         ]
+    #     )
 
 
 chord_label_index = ChordLabelIndex(_values)
